@@ -88,11 +88,11 @@ int QDaemonApplicationPrivate::exec()
 
 
 	if (!status)
-		q->exit(-1);
-	else if (autoQuit)
-		q->quit();
+		return -1;
+	else if (op && autoQuit)
+		QMetaObject::invokeMethod(q, "quit", Qt::QueuedConnection);
 
-	return QCoreApplication::exec(); // Finally, start the event loop
+	return QCoreApplication::exec();	// Finally, start the event loop
 }
 
 void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
@@ -105,6 +105,7 @@ void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
 	case SIGINT:
 		{
 			QDaemonApplication * app = QDaemonApplication::instance();
+
 			if (app)
 				app->quit();
 			else

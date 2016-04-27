@@ -4,14 +4,21 @@
 #
 #-------------------------------------------------
 
-QT += core dbus
+QT += core
 QT -= gui
+
+unix:!macx  {
+	QT += dbus
+}
+
+macx|win32  {
+	error("This library is currently not supporting your platform.")
+}
 
 TARGET = qdaemon
 TEMPLATE = lib
 
 DEFINES += QDAEMON_LIBRARY
-CONFIG += c++11
 
 MAKEFILE = qdaemon.make
 
@@ -33,3 +40,8 @@ unix {
 	target.path = /usr/lib
 	INSTALLS += target
 }
+
+DISTFILES +=
+
+RESOURCES += \
+	qdaemon.qrc

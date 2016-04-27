@@ -5,9 +5,13 @@
 
 #include <QObject>
 #include <QTextStream>
+#include <QPointer>
 
 #include <QDBusConnection>
+#include <QDBusAbstractAdaptor>
 #include <QDBusAbstractInterface>
+
+#define Q_DAEMON_DBUS_CONTROL_INTERFACE "io.qt.QtDaemon.Control"
 
 QT_BEGIN_NAMESPACE
 
@@ -30,10 +34,12 @@ protected:
 	QTextStream out;
 };
 
+// TODO: Provide file based logging for the daemon backend
 class Q_DAEMON_LOCAL DaemonBackendUnix : public QObject, public BackendUnix
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(DaemonBackendUnix)
+	Q_CLASSINFO("D-Bus Interface", Q_DAEMON_DBUS_CONTROL_INTERFACE)
 
 public:
 	DaemonBackendUnix();
@@ -70,7 +76,7 @@ protected:
 	QDBusAbstractInterface * getInterface();
 
 private:
-	QDBusAbstractInterface * dbusInterface;
+	QPointer<QDBusAbstractInterface> dbusInterface;
 };
 
 QT_END_NAMESPACE

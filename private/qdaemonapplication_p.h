@@ -38,6 +38,7 @@ private:
 
 	class CommandLineOptions
 	{
+		// TODO: Support prefix paths for installation of dbus conf file and init.d template script
 	public:
 		CommandLineOptions();
 

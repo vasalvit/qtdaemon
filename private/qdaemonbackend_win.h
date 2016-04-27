@@ -3,8 +3,6 @@
 
 #include "qdaemonbackend.h"
 
-#ifdef Q_OS_WIN
-
 QT_BEGIN_NAMESPACE
 
 class Q_DAEMON_LOCAL BackendWindows : public QDaemonBackend
@@ -24,8 +22,6 @@ public:
 	virtual bool uninstall();
 };
 
-
 QT_END_NAMESPACE
 
-#endif
 #endif // QDAEMONBACKEND_WIN_H
