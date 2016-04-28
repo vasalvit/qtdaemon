@@ -19,7 +19,8 @@ public:
 		StopOperation = 0x02,
 		InstallOperation = 0x04,
 		UninstallOperation = 0x08,
-		HelpOperation = 0x10
+		HelpOperation = 0x10,
+		FakeOperation = 0x20
 	};
 	Q_DECLARE_FLAGS(Operations, Operation)
 
@@ -50,7 +51,7 @@ private:
 		QString value(const QString &) const;
 	private:
 		QCommandLineParser parser;
-		QCommandLineOption installOption, uninstallOption, startOption, stopOption, helpOption;
+		QCommandLineOption installOption, uninstallOption, startOption, stopOption, fakeOption, helpOption;
 		Operations op;
 	} commandLine;
 };

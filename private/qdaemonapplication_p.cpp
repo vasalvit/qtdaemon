@@ -54,6 +54,12 @@ int QDaemonApplicationPrivate::exec()
 
 		return 0;
 	}
+	else if (op.testFlag(FakeOperation))  {
+		// Runs the daemon in fake mode. It will emit the daemonized() signal and will start the event loop, but will not detach from the controlling terminal.
+		// Control will not be available, except through the debugger (or through POSIX signals).
+		QMetaObject::invokeMethod(q, "daemonized", Qt::QueuedConnection);
+		return QCoreApplication::exec();
+	}
 
 	// Create the backend
 	backend = DaemonBackend::create(op ? QDaemonBackend::ControllerType : QDaemonBackend::DaemonType);
@@ -141,6 +147,7 @@ QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
 	  uninstallOption(QStringList() << "u" << "uninstall", QCoreApplication::translate("main", "Uninstall the daemon")),
 	  startOption(QStringList() << "s" << "start", QCoreApplication::translate("main", "Start the daemon")),
 	  stopOption(QStringList() << "t" << "stop" << "terminate", QCoreApplication::translate("main", "Stop the daemon")),
+	  fakeOption(QStringList() << "fake", QCoreApplication::translate("main", "Run the daemon in fake mode (for debugging purposes). The process will not actually daemonize itself, but will run as a console application faking a running daemon.")),
 	  helpOption(parser.addHelpOption())
 
 {
@@ -148,6 +155,7 @@ QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
 	parser.addOption(uninstallOption);
 	parser.addOption(startOption);
 	parser.addOption(stopOption);
+	parser.addOption(fakeOption);
 
 #ifdef Q_OS_LINUX
 	const QCommandLineOption dbusPrefixOption(DaemonBackend::dbusPrefix, QCoreApplication::translate("main", "Sets the path for the installed dbus configuration file (defaults to /etc/dbus-1/system.d"), QStringLiteral("path"), QStringLiteral("/etc/dbus-1/system.d"));
@@ -172,8 +180,10 @@ bool QDaemonApplicationPrivate::CommandLineOptions::process(const QStringList & 
 		op |= StopOperation;
 	if (parser.isSet(helpOption))
 		op |= HelpOperation;
+	if (parser.isSet(fakeOption))
+		op |= FakeOperation;
 
-	quint32 flags = op & (InstallOperation | UninstallOperation | StartOperation | StopOperation | HelpOperation);
+	quint32 flags = op & (InstallOperation | UninstallOperation | StartOperation | StopOperation | HelpOperation | FakeOperation);
 	if (qPopulationCount(flags) > 1)  {
 		qWarning("More than one control operation was specified.");
 		return false;
