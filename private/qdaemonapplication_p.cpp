@@ -11,18 +11,22 @@
 #include "qdaemonbackend_win.h"
 typedef BackendWindows DaemonBackend;
 #else
+#ifdef Q_OS_LINUX
 #include "qdaemonbackend_unix.h"
 typedef BackendUnix DaemonBackend;
+#else
+#error "This library is not supported on you platform"
+#endif
 #endif
 
 QT_BEGIN_NAMESPACE
 
 QDaemonApplicationPrivate::QDaemonApplicationPrivate(QDaemonApplication * q)
-	: q_ptr(q), backend(NULL), autoQuit(true)
+	: q_ptr(q), backend(nullptr), autoQuit(true)
 {
-	signal(SIGTERM, QDaemonApplicationPrivate::processSignalHandler);
-	signal(SIGINT, QDaemonApplicationPrivate::processSignalHandler);
-	signal(SIGSEGV, QDaemonApplicationPrivate::processSignalHandler);
+	std::signal(SIGTERM, QDaemonApplicationPrivate::processSignalHandler);
+	std::signal(SIGINT, QDaemonApplicationPrivate::processSignalHandler);
+	std::signal(SIGSEGV, QDaemonApplicationPrivate::processSignalHandler);
 }
 
 QDaemonApplicationPrivate::~QDaemonApplicationPrivate()
@@ -53,6 +57,16 @@ int QDaemonApplicationPrivate::exec()
 
 	// Create the backend
 	backend = DaemonBackend::create(op ? QDaemonBackend::ControllerType : QDaemonBackend::DaemonType);
+
+	// Set any additional arguments if needed
+#ifdef Q_OS_LINUX
+	DaemonBackend::Arguments arguments;
+	arguments.insert(DaemonBackend::dbusPrefix, commandLine.value(DaemonBackend::dbusPrefix));
+	arguments.insert(DaemonBackend::initdPrefix, commandLine.value(DaemonBackend::initdPrefix));
+
+	backend->setArguments(arguments);
+#endif
+
 	if (!backend->initialize())  {
 		qWarning("The daemon controller backend failed to initialize");
 		return -1;
@@ -120,6 +134,7 @@ void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
 // --------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 
+
 QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
 	: parser(),
 	  installOption(QStringList() << "i" << "install", QCoreApplication::translate("main", "Install the daemon")),
@@ -127,11 +142,19 @@ QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
 	  startOption(QStringList() << "s" << "start", QCoreApplication::translate("main", "Start the daemon")),
 	  stopOption(QStringList() << "t" << "stop" << "terminate", QCoreApplication::translate("main", "Stop the daemon")),
 	  helpOption(parser.addHelpOption())
+
 {
 	parser.addOption(installOption);
 	parser.addOption(uninstallOption);
 	parser.addOption(startOption);
 	parser.addOption(stopOption);
+
+#ifdef Q_OS_LINUX
+	const QCommandLineOption dbusPrefixOption(DaemonBackend::dbusPrefix, QCoreApplication::translate("main", "Sets the path for the installed dbus configuration file (defaults to /etc/dbus-1/system.d"), QStringLiteral("path"), QStringLiteral("/etc/dbus-1/system.d"));
+	const QCommandLineOption initdPrefixOption(DaemonBackend::initdPrefix, QCoreApplication::translate("main", "Sets the path for the installed init.d script (defaults to /etc/init.d"), QStringLiteral("path"), QStringLiteral("/etc/init.d"));
+	parser.addOption(dbusPrefixOption);
+	parser.addOption(initdPrefixOption);
+#endif
 }
 
 bool QDaemonApplicationPrivate::CommandLineOptions::process(const QStringList & arguments)
@@ -159,14 +182,19 @@ bool QDaemonApplicationPrivate::CommandLineOptions::process(const QStringList & 
 	return true;
 }
 
-QString QDaemonApplicationPrivate::CommandLineOptions::helpText() const
+inline QString QDaemonApplicationPrivate::CommandLineOptions::helpText() const
 {
 	return parser.helpText();
 }
 
-QDaemonApplicationPrivate::Operations QDaemonApplicationPrivate::CommandLineOptions::operations() const
+inline QDaemonApplicationPrivate::Operations QDaemonApplicationPrivate::CommandLineOptions::operations() const
 {
 	return op;
+}
+
+inline QString QDaemonApplicationPrivate::CommandLineOptions::value(const QString & name) const
+{
+	return parser.value(name);
 }
 
 QT_END_NAMESPACE

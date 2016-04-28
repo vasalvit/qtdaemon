@@ -47,6 +47,7 @@ private:
 		QString helpText() const;
 		Operations operations() const;
 
+		QString value(const QString &) const;
 	private:
 		QCommandLineParser parser;
 		QCommandLineOption installOption, uninstallOption, startOption, stopOption, helpOption;

@@ -20,11 +20,14 @@ class Q_DAEMON_LOCAL BackendUnix : public QDaemonBackend
 	Q_DISABLE_COPY(BackendUnix)
 
 public:
-	BackendUnix();
-	virtual ~BackendUnix();
+	static const QString dbusPrefix;
+	static const QString initdPrefix;
 
-	virtual bool initialize();
-	virtual bool finalize();
+	BackendUnix();
+	~BackendUnix() override;
+
+	bool initialize() override;
+	bool finalize() override;
 
 	static QDaemonBackend * create(BackendType);
 
@@ -43,17 +46,17 @@ class Q_DAEMON_LOCAL DaemonBackendUnix : public QObject, public BackendUnix
 
 public:
 	DaemonBackendUnix();
-	virtual ~DaemonBackendUnix();
+	~DaemonBackendUnix() override;
 
 	Q_INVOKABLE bool isRunning();
 
-	virtual bool initialize();
-	virtual bool finalize();
+	bool initialize() override;
+	bool finalize() override;
 
-	virtual bool start();
-	Q_INVOKABLE virtual bool stop();
-	virtual bool install();
-	virtual bool uninstall();
+	bool start() override;
+	Q_INVOKABLE bool stop() override;
+	bool install() override;
+	bool uninstall() override;
 };
 
 class Q_DAEMON_LOCAL ControllerBackendUnix : public BackendUnix
@@ -62,21 +65,24 @@ class Q_DAEMON_LOCAL ControllerBackendUnix : public BackendUnix
 
 public:
 	ControllerBackendUnix();
-	virtual ~ControllerBackendUnix();
+	~ControllerBackendUnix() override;
 
-	virtual bool initialize();
-	virtual bool finalize();
+	void setArguments(const Arguments &) override;
 
-	virtual bool start();
-	virtual bool stop();
-	virtual bool install();
-	virtual bool uninstall();
+	bool initialize() override;
+	bool finalize() override;
+
+	bool start() override;
+	bool stop() override;
+	bool install() override;
+	bool uninstall() override;
 
 protected:
 	QDBusAbstractInterface * getInterface();
 
 private:
 	QPointer<QDBusAbstractInterface> dbusInterface;
+	Arguments arguments;
 };
 
 QT_END_NAMESPACE

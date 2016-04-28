@@ -3,6 +3,8 @@
 #include <QCoreApplication>
 #include <QProcess>
 #include <QThread>
+#include <QDir>
+#include <QFile>
 
 #include <QDBusError>
 #include <QDBusInterface>
@@ -13,6 +15,9 @@ QT_BEGIN_NAMESPACE
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // --- BackendUnix ---------------------------------------------------------------------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+const QString BackendUnix::dbusPrefix = QStringLiteral("dbus-prefix");
+const QString BackendUnix::initdPrefix = QStringLiteral("initd-prefix");
 
 BackendUnix::BackendUnix()
 	: QDaemonBackend(), dbus(QStringLiteral("QtDaemon")), out(stdout)
@@ -65,7 +70,7 @@ QDaemonBackend * BackendUnix::create(BackendType type)
 		return new DaemonBackendUnix();
 	default:
 		Q_ASSERT(false);
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -147,13 +152,18 @@ bool DaemonBackendUnix::uninstall()
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 ControllerBackendUnix::ControllerBackendUnix()
-	: dbusInterface(NULL)
+	: dbusInterface(nullptr)
 {
 }
 
 ControllerBackendUnix::~ControllerBackendUnix()
 {
 	delete dbusInterface;
+}
+
+void ControllerBackendUnix::setArguments(const Arguments & args)
+{
+	arguments = args;
 }
 
 bool ControllerBackendUnix::initialize()
@@ -225,14 +235,86 @@ bool ControllerBackendUnix::stop()
 
 bool ControllerBackendUnix::install()
 {
-	Q_ASSERT(false);		// TODO: Provide init.d script
-	return false;
+	QString dbusPath = arguments.value(dbusPrefix), initdPath = arguments.value(initdPrefix);
+
+	// Sanity check for the paths and permissions of the provided directories
+	if (dbusPath.isEmpty() || initdPath.isEmpty())  {
+		out << QStringLiteral("The provided D-Bus path and/or init.d path can't be empty");
+		return false;
+	}
+
+	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(serviceName));
+	if (dbusConf.exists())  {
+		out << QStringLiteral("The provided D-Bus configuration directory already contains a configuration for this service. Uninstall first") << endl;
+		return false;
+	}
+	if (initdFile.exists())  {
+		out << QStringLiteral("The provided init.d directory already contains a script for this service. Uninstall first") << endl;
+		return false;
+	}
+
+	bool status = dbusConf.open(QFile::WriteOnly | QFile::Text) && initdFile.open(QFile::WriteOnly | QFile::Text);
+	if (!status)  {
+		out << QStringLiteral("Couldn't open the D-Bus configuration file and/or the init.d script for writing. Check the permissions for the D-Bus configuration directory and the init.d script directory.") << endl;
+
+		// Clean up any created files
+		dbusConf.remove();
+		initdFile.remove();
+
+		return false;
+	}
+
+	// We have opened both files, read the templates
+	QFile dbusTemplate(":/resources/dbus"), initdTemplate(":/resources/init");
+	status = dbusTemplate.open(QFile::ReadOnly | QFile::Text) && initdTemplate.open(QFile::ReadOnly | QFile::Text);
+
+	Q_ASSERT(status);		// We don't expect resources to be unaccessible, but who knows ...
+	if (!status)  {
+		out << QStringLiteral("Couldn't read the daemon's resources!");
+		return false;
+	}
+
+	// Read the dbus configuration, do the substitution and write to disk
+	QTextStream fin(&dbusTemplate), fout(&dbusConf);
+	QString data = fin.readAll();
+	data.replace(QStringLiteral("%%SERVICE_NAME%%"), serviceName);
+	fout << data;
+
+	if (fout.status() != QTextStream::Ok)  {
+		out << QStringLiteral("An error occured while writing the D-Bus configuration. Installation may be broken");
+		fout.resetStatus();
+	}
+
+	// Switch IO devices
+	fin.setDevice(&initdTemplate);
+	fout.setDevice(&initdFile);
+
+	// Read the init.d script, do the substitution and write to disk
+	data = fin.readAll();
+	data.replace(QStringLiteral("%%DAEMON%%"), QCoreApplication::applicationFilePath());
+	fout << data;
+
+	if (fout.status() != QTextStream::Ok)
+		out << QStringLiteral("An error occured while writing the init.d script. Installation may be broken");
+
+	return true;
 }
 
 bool ControllerBackendUnix::uninstall()
 {
-	Q_ASSERT(false);		// TODO: Remove init.d script
-	return false;
+	QString dbusPath = arguments.value(dbusPrefix), initdPath = arguments.value(initdPrefix);
+
+	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(serviceName));
+	if (dbusConf.exists() && !dbusConf.remove())  {
+		out << QStringLiteral("Couldn't remove the D-Bus configuration file for this service. Check your permissions.") << endl;
+		return false;
+	}
+	if (initdFile.exists() && !initdFile.remove())  {
+		out << QStringLiteral("Couldn't remove the init.d script for this service. Check your permissions.") << endl;
+		return false;
+	}
+
+	return true;
 }
 
 QDBusAbstractInterface * ControllerBackendUnix::getInterface()
@@ -243,7 +325,7 @@ QDBusAbstractInterface * ControllerBackendUnix::getInterface()
 	// Wait for the daemon to notify us so we know everything is okay
 	if (!dbusInterface->isValid())  {
 		delete dbusInterface;
-		dbusInterface = NULL;
+		dbusInterface = nullptr;
 	}
 
 	return dbusInterface;

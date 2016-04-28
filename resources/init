@@ -1,0 +1,24 @@
+#!/bin/bash
+
+HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|help}"
+
+case "$1" in
+	start)
+	   %%DAEMON%% --start
+	   ;;
+	stop)
+	   %%DAEMON%% --stop
+	   ;;
+    restart)
+	   %%DAEMON%% --stop
+	   %%DAEMON%% --start
+	   ;;
+	uninstall)
+	   %%DAEMON%% --uninstall
+	   ;;
+	help
+	   echo $HELP_TEXT
+	   ;;
+	*)
+	   echo "Unrecognised option. "$HELP_TEXT
+esac

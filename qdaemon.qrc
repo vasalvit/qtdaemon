@@ -1,1 +1,6 @@
-<RCC/>
+<RCC>
+    <qresource prefix="/">
+        <file>resources/init</file>
+        <file>resources/dbus</file>
+    </qresource>
+</RCC>

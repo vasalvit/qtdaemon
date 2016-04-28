@@ -18,6 +18,8 @@ macx|win32  {
 TARGET = qdaemon
 TEMPLATE = lib
 
+CONFIG += c++11
+
 DEFINES += QDAEMON_LIBRARY
 
 MAKEFILE = qdaemon.make
@@ -41,7 +43,9 @@ unix {
 	INSTALLS += target
 }
 
-DISTFILES +=
+DISTFILES += \
+	resources/init \
+	resources/dbus
 
 RESOURCES += \
 	qdaemon.qrc
