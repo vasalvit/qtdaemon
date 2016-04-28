@@ -243,7 +243,9 @@ bool ControllerBackendUnix::install()
 		return false;
 	}
 
-	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(serviceName));
+	QString appFileName = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
+
+	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(appFileName));
 	if (dbusConf.exists())  {
 		out << QStringLiteral("The provided D-Bus configuration directory already contains a configuration for this service. Uninstall first") << endl;
 		return false;
@@ -285,6 +287,10 @@ bool ControllerBackendUnix::install()
 		fout.resetStatus();
 	}
 
+	// Set the permissions for the dbus configuration
+	if (!dbusConf.setPermissions(QFile::WriteOwner | QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther))
+		out << QStringLiteral("An error occured while setting the permissions for the D-Bus configuration. Installation may be broken");
+
 	// Switch IO devices
 	fin.setDevice(&initdTemplate);
 	fout.setDevice(&initdFile);
@@ -297,14 +303,19 @@ bool ControllerBackendUnix::install()
 	if (fout.status() != QTextStream::Ok)
 		out << QStringLiteral("An error occured while writing the init.d script. Installation may be broken");
 
+	// Set the permissions for the init.d script
+	if (!initdFile.setPermissions(QFile::WriteOwner | QFile::ExeOwner | QFile::ReadOwner | QFile::ReadGroup | QFile::ExeGroup | QFile::ReadOther | QFile::ExeOther))
+		out << QStringLiteral("An error occured while setting the permissions for the init.d script. Installation may be broken");
+
 	return true;
 }
 
 bool ControllerBackendUnix::uninstall()
 {
 	QString dbusPath = arguments.value(dbusPrefix), initdPath = arguments.value(initdPrefix);
+	QString appFileName = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
 
-	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(serviceName));
+	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(appFileName));
 	if (dbusConf.exists() && !dbusConf.remove())  {
 		out << QStringLiteral("Couldn't remove the D-Bus configuration file for this service. Check your permissions.") << endl;
 		return false;

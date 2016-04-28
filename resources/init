@@ -9,14 +9,14 @@ case "$1" in
 	stop)
 	   %%DAEMON%% --stop
 	   ;;
-    restart)
+	restart)
 	   %%DAEMON%% --stop
 	   %%DAEMON%% --start
 	   ;;
 	uninstall)
 	   %%DAEMON%% --uninstall
 	   ;;
-	help
+	help)
 	   echo $HELP_TEXT
 	   ;;
 	*)
