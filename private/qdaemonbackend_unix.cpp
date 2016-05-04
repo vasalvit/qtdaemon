@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QDir>
 #include <QFile>
+#include <QElapsedTimer>
 
 #include <QDBusError>
 #include <QDBusInterface>
@@ -151,6 +152,8 @@ bool DaemonBackendUnix::uninstall()
 // --- ControllerBackendUnix ------------------------------------------------------------------------------------------------------------------------------ //
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
+static qint32 dbusServiceTimeout = 10000;		// Up to 10 seconds
+
 ControllerBackendUnix::ControllerBackendUnix()
 	: dbusInterface(nullptr)
 {
@@ -197,10 +200,20 @@ bool ControllerBackendUnix::start()
 	if (!QProcess::startDetached(QCoreApplication::applicationFilePath()))
 		return false;
 
-	QThread::sleep(1);		// Give the daemon a second to start it's D-Bus service
+	QElapsedTimer dbusTimeoutTimer;
+	dbusTimeoutTimer.start();
 
-	// Repeat the call to make sure the communication is Ok
-	interface = getInterface();
+	// Give the daemon some seconds to start it's D-Bus service
+	while (!dbusTimeoutTimer.hasExpired(dbusServiceTimeout))  {
+		// Repeat the call to make sure the communication is Ok
+		interface = getInterface();
+		if (interface)
+			break;
+
+		QThread::msleep(500);	// Wait some time before retrying
+	}
+
+	// Check the D-Bus status
 	if (!interface)  {
 		out << QStringLiteral("Connection with the daemon couldn't be established. Error: ") + dbus.lastError().message() << endl;
 		return false;
