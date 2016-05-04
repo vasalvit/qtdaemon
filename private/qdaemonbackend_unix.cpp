@@ -152,7 +152,7 @@ bool DaemonBackendUnix::uninstall()
 // --- ControllerBackendUnix ------------------------------------------------------------------------------------------------------------------------------ //
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
-static qint32 dbusServiceTimeout = 10000;		// Up to 10 seconds
+static qint32 dbusServiceTimeout = 30000;		// Up to 30 seconds
 
 ControllerBackendUnix::ControllerBackendUnix()
 	: dbusInterface(nullptr)
@@ -200,12 +200,12 @@ bool ControllerBackendUnix::start()
 	if (!QProcess::startDetached(QCoreApplication::applicationFilePath()))
 		return false;
 
+	// Repeat the call to make sure the communication is Ok
 	QElapsedTimer dbusTimeoutTimer;
 	dbusTimeoutTimer.start();
 
 	// Give the daemon some seconds to start it's D-Bus service
 	while (!dbusTimeoutTimer.hasExpired(dbusServiceTimeout))  {
-		// Repeat the call to make sure the communication is Ok
 		interface = getInterface();
 		if (interface)
 			break;
