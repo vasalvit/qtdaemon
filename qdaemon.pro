@@ -4,15 +4,16 @@
 #
 #-------------------------------------------------
 
+macx  {
+	error("This library is currently not supporting your platform.")
+}
+
 QT += core
 QT -= gui
 
 unix:!macx  {
 	QT += dbus
-}
 
-macx|win32  {
-	error("This library is currently not supporting your platform.")
 }
 
 TARGET = qdaemon
@@ -25,27 +26,37 @@ DEFINES += QDAEMON_LIBRARY
 MAKEFILE = qdaemon.make
 
 SOURCES += qdaemonapplication.cpp \
+	qdaemonlog.cpp \
 	private/qdaemonapplication_p.cpp \
-	private/qdaemonbackend_win.cpp \
-	private/qdaemonbackend_unix.cpp \
-	private/qdaemonbackend.cpp
+	private/qdaemonbackend.cpp \
+	private/qdaemonlog_p.cpp
 
-HEADERS += qdaemonapplication.h \
-	qdaemon-global.h \
+HEADERS += qdaemon-global.h \
 	QDaemonApplication \
+	QDaemonLog \
+	qdaemonapplication.h \
+	qdaemonlog.h \
 	private/qdaemonapplication_p.h \
-	private/qdaemonbackend_win.h \
-	private/qdaemonbackend_unix.h \
-	private/qdaemonbackend.h
+	private/qdaemonbackend.h \
+	private/qdaemonlog_p.h
 
-unix {
+unix  {
+	SOURCES += private/qdaemonbackend_unix.cpp
+	HEADERS += private/qdaemonbackend_unix.h
+
 	target.path = /usr/lib
 	INSTALLS += target
+
+	DISTFILES += \
+		resources/init \
+		resources/dbus
+
+	RESOURCES += \
+		qdaemon.qrc
+}
+win32  {
+	SOURCES += private/qdaemonbackend_win.cpp
+	HEADERS += private/qdaemonbackend_win.h
 }
 
-DISTFILES += \
-	resources/init \
-	resources/dbus
 
-RESOURCES += \
-	qdaemon.qrc
