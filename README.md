@@ -45,6 +45,7 @@ The application behaviour is controlled through command line switches. When no s
 
 * `--uninstall`, `-u` Run the application as controlling terminal and attempt to stop the daemon/service.
 * `--help`, `-h` Provide help text on the command line switches
+* `--fake` Runs in pseudo-daemon mode. The application object will emit the `daemonized()` signal, but will not try to detach itself from the running terminal (Linux) and will not contact the service control manager (Windows). It is provided as a means to debug the daemon/service.
 
 # Daemon/service installation #
 
