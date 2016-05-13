@@ -13,7 +13,6 @@ QT -= gui
 
 unix:!macx  {
 	QT += dbus
-
 }
 
 TARGET = qdaemon
@@ -57,6 +56,9 @@ unix  {
 win32  {
 	SOURCES += private/qdaemonbackend_win.cpp
 	HEADERS += private/qdaemonbackend_win.h
+
+	LIBS += -ladvapi32
+#	DESTDIR = $$OUT_PWD	# For shadow building on Windows
 }
 
 

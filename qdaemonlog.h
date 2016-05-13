@@ -1,12 +1,13 @@
 #ifndef QDAEMONLOG_H
 #define QDAEMONLOG_H
 
-#include <QtGlobal>
+#include "qdaemon-global.h"
 
-// TODO: Make the logger sync between different processes (controller and daemon)
+// TODO: Possibly make the logger sync between different processes (controller and daemon)
+// All methods (without the constructor and destructor) are thread-safe.
 
 class QDaemonLogPrivate;
-class QDaemonLog
+class Q_DAEMON_EXPORT QDaemonLog
 {
 	Q_DISABLE_COPY(QDaemonLog)
 
@@ -14,23 +15,26 @@ public:
 	enum EntrySeverity  {
 		NoticeEntry, WarningEntry, ErrorEntry
 	};
+	enum LogType { LogToStdout, LogToFile };
 
 	QDaemonLog();
 	~QDaemonLog();
 
-	friend QDaemonLog & qDaemonLog();
-	friend void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity);	// Thread-safe
+	void setLogType(LogType);
+	LogType logType() const;
 
-	QDaemonLog & operator << (const QString &);	// Thread-safe
+	QDaemonLog & operator << (const QString &);
+
+	friend Q_DAEMON_EXPORT QDaemonLog & qDaemonLog();
+	friend Q_DAEMON_EXPORT void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity);
 
 private:
 	QDaemonLogPrivate * d_ptr;
 };
 
 // --- Friend declarations ---------------------------------------------------------------------------------------------- //
-
-QDaemonLog & qDaemonLog();
-void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity = QDaemonLog::NoticeEntry);
-
+Q_DAEMON_EXPORT QDaemonLog & qDaemonLog();
+Q_DAEMON_EXPORT void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity = QDaemonLog::NoticeEntry);
+// ---------------------------------------------------------------------------------------------------------------------- //
 
 #endif // QDAEMONLOG_H

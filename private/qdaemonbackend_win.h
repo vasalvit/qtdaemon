@@ -3,7 +3,48 @@
 
 #include "qdaemonbackend.h"
 
+#include <QThread>
+#include <QSemaphore>
+
+#include <Windows.h>
+
+#ifndef UNICODE
+#error Enable unicode support for your compiler.
+#endif
+
 QT_BEGIN_NAMESPACE
+
+VOID WINAPI ServiceMain(DWORD, LPTSTR *);
+DWORD WINAPI ServiceControlHandler(DWORD control, DWORD, LPVOID, LPVOID context);
+VOID WINAPI ReportServiceStatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint);
+
+class Q_DAEMON_LOCAL WindowsCtrlDispatcher : public QThread
+{
+public:
+	WindowsCtrlDispatcher();
+
+	void run() override;
+
+	void startService(const QString &);
+	void stopService();
+private:
+
+	QString serviceName;
+	QSemaphore serviceStartLock;
+	QSemaphore serviceQuitLock;
+	SERVICE_TABLE_ENTRY dispatchTable[2];
+	SERVICE_STATUS_HANDLE serviceStatusHandle;
+	SERVICE_STATUS serviceStatus;
+
+private:
+	static WindowsCtrlDispatcher * instance;
+
+	friend VOID WINAPI ServiceMain(DWORD, LPTSTR *);
+	friend DWORD WINAPI ServiceControlHandler(DWORD control, DWORD, LPVOID, LPVOID context);
+	friend VOID WINAPI ReportServiceStatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint);
+};
+
+// ------------------------------------------------------------------------------------------------------ //
 
 class Q_DAEMON_LOCAL BackendWindows : public QDaemonBackend
 {
@@ -11,15 +52,62 @@ class Q_DAEMON_LOCAL BackendWindows : public QDaemonBackend
 
 public:
 	BackendWindows();
-	virtual ~BackendWindows();
+	~BackendWindows() override;
 
-	virtual bool initialize();
-	virtual bool finalize();
+	bool initialize() override;
+	bool finalize() override;
 
-	virtual bool start();
-	virtual bool stop();
-	virtual bool install();
-	virtual bool uninstall();
+	static QDaemonBackend * create(BackendType);
+
+protected:
+	QString name, path, description;
+};
+
+class Q_DAEMON_LOCAL DaemonBackendWindows : public BackendWindows
+{
+	Q_DISABLE_COPY(DaemonBackendWindows)
+
+public:
+	DaemonBackendWindows();
+	~DaemonBackendWindows() override;
+
+	bool initialize() override;
+	bool finalize() override;
+
+	bool start() override;
+	bool stop() override;
+	bool install() override;
+	bool uninstall() override;
+
+private:
+	WindowsCtrlDispatcher dispatcher;
+};
+
+class Q_DAEMON_LOCAL ControllerBackendWindows : public BackendWindows
+{
+	Q_DISABLE_COPY(ControllerBackendWindows)
+
+public:
+	ControllerBackendWindows();
+	~ControllerBackendWindows() override;
+
+	bool initialize() override;
+	bool finalize() override;
+
+	bool start() override;
+	bool stop() override;
+	bool install() override;
+	bool uninstall() override;
+
+private:
+	bool waitForStatus(SC_HANDLE, int);
+
+	SC_HANDLE createService();
+	SC_HANDLE openService(int);
+	void closeService(SC_HANDLE);
+
+private:
+	SC_HANDLE manager;
 };
 
 QT_END_NAMESPACE

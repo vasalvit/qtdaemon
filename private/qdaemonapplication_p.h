@@ -3,6 +3,7 @@
 
 #include "qdaemon-global.h"
 #include "qdaemonbackend.h"
+#include "qdaemonlog.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -36,6 +37,7 @@ private:
 	QDaemonApplication * q_ptr;
 	QDaemonBackend * backend;
 	bool autoQuit;
+	QDaemonLog log;
 
 	class CommandLineOptions
 	{
@@ -54,6 +56,8 @@ private:
 		QCommandLineOption installOption, uninstallOption, startOption, stopOption, fakeOption, helpOption;
 		Operations op;
 	} commandLine;
+
+	static QString description;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDaemonApplicationPrivate::Operations)

@@ -42,4 +42,14 @@ void QDaemonApplication::setAutoQuit(bool aquit)
 	d->autoQuit = aquit;
 }
 
+QString QDaemonApplication::applicationDescription()
+{
+	return QDaemonApplicationPrivate::description;
+}
+
+void QDaemonApplication::setApplicationDescription(const QString & description)
+{
+	QDaemonApplicationPrivate::description = description;
+}
+
 QT_END_NAMESPACE

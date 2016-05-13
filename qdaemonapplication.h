@@ -23,6 +23,8 @@ public:
 	bool autoQuit() const;
 	void setAutoQuit(bool);
 
+	static QString applicationDescription();
+	static void setApplicationDescription(const QString &);
 signals:
 	void daemonized();
 

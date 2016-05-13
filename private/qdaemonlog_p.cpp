@@ -2,27 +2,23 @@
 #include "qdaemonlog.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
-#include <QDateTime>
 #include <QMutexLocker>
 
 QDaemonLog * QDaemonLogPrivate::logger = NULL;
 
 QDaemonLogPrivate::QDaemonLogPrivate()
-	: logStream(stdout)
+	: logStream(&logFile), logType(QDaemonLog::LogToStdout)
 {
 	// Get the log file path
 	QFileInfo info(QCoreApplication::applicationFilePath());
-	QString logFilePath = info.absoluteDir().filePath(info.completeBaseName() + QStringLiteral(".log"));
+	logFilePath = info.absoluteDir().filePath(info.completeBaseName() + QStringLiteral(".log"));
 
-	logFile.setFileName(logFilePath);
-
-	// Try opening the file
-	if (logFile.open(QFile::WriteOnly | QFile::Text | QFile::Append))
-		logStream.setDevice(&logFile);
-	else
-		write(QStringLiteral("The log file %1 couldn't be opened for writing!").arg(logFilePath), QDaemonLog::ErrorEntry);
+	// Open the default stdout logging
+	if (Q_UNLIKELY(!logFile.open(stdout, QFile::WriteOnly | QFile::Text)))
+		qWarning("Error while trying to open the standard output. Giving up!");
 }
 
 QDaemonLogPrivate::~QDaemonLogPrivate()
@@ -33,9 +29,9 @@ QDaemonLogPrivate::~QDaemonLogPrivate()
 
 void QDaemonLogPrivate::write(const QString & message, QDaemonLog::EntrySeverity severity)
 {
-	static const QString noticeEntry = QStringLiteral("%1 > %2");
-	static const QString warningEntry = QStringLiteral("%1 > Warning: %2");
-	static const QString errorEntry = QStringLiteral("%1 > Error: %2");
+	static const QString noticeEntry = QStringLiteral("%1 %2");
+	static const QString warningEntry = QStringLiteral("%1 Warning: %2");
+	static const QString errorEntry = QStringLiteral("%1 Error: %2");
 
 	QString formattedMessage, date = QDateTime::currentDateTime().toString(Qt::ISODate);
 	switch (severity)
@@ -50,9 +46,6 @@ void QDaemonLogPrivate::write(const QString & message, QDaemonLog::EntrySeverity
 	default:
 		formattedMessage = noticeEntry.arg(date).arg(message);
 	}
-
-	QMutexLocker lock(&streamMutex);	// The MS compiler doesn't get anonymous objects (error C2530: references must be initialized)
-	Q_UNUSED(lock);						// Suppress warning for unused variable
 
 	logStream << formattedMessage << endl;
 }

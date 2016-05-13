@@ -20,8 +20,11 @@ public:
 	void write(const QString &, QDaemonLog::EntrySeverity);
 
 private:
+	QString logFilePath;
 	QFile logFile;
 	QTextStream logStream;
+	QDaemonLog::LogType logType;
+
 	QMutex streamMutex;
 
 	static QDaemonLog * logger;

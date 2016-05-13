@@ -7,19 +7,20 @@
 
 #include <csignal>
 
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN)
 #include "qdaemonbackend_win.h"
 typedef BackendWindows DaemonBackend;
 #else
-#ifdef Q_OS_LINUX
 #include "qdaemonbackend_unix.h"
 typedef BackendUnix DaemonBackend;
-#else
-#error "This library is not supported on you platform"
+#if !defined(Q_OS_LINUX)
+#warning This library is not supported on your platform.
 #endif
 #endif
 
 QT_BEGIN_NAMESPACE
+
+QString QDaemonApplicationPrivate::description;
 
 QDaemonApplicationPrivate::QDaemonApplicationPrivate(QDaemonApplication * q)
 	: q_ptr(q), backend(nullptr), autoQuit(true)
@@ -31,9 +32,6 @@ QDaemonApplicationPrivate::QDaemonApplicationPrivate(QDaemonApplication * q)
 
 QDaemonApplicationPrivate::~QDaemonApplicationPrivate()
 {
-	if (backend)
-		backend->finalize();
-
 	delete backend;
 }
 
@@ -62,7 +60,12 @@ int QDaemonApplicationPrivate::exec()
 	}
 
 	// Create the backend
-	backend = DaemonBackend::create(op ? QDaemonBackend::ControllerType : QDaemonBackend::DaemonType);
+	if (op)
+		backend = DaemonBackend::create(QDaemonBackend::ControllerType);		// Controller type backend (default logging to stdout
+	else  {
+		log.setLogType(QDaemonLog::LogToFile);
+		backend = DaemonBackend::create(QDaemonBackend::DaemonType);		// Controller type backend (default logging to stdout
+	}
 
 	// Set any additional arguments if needed
 #ifdef Q_OS_LINUX
@@ -74,7 +77,7 @@ int QDaemonApplicationPrivate::exec()
 #endif
 
 	if (!backend->initialize())  {
-		qWarning("The daemon controller backend failed to initialize");
+		qDaemonLog("The daemon controller backend failed to initialize", QDaemonLog::ErrorEntry);
 		return -1;
 	}
 
@@ -112,7 +115,12 @@ int QDaemonApplicationPrivate::exec()
 	else if (op && autoQuit)
 		QMetaObject::invokeMethod(q, "quit", Qt::QueuedConnection);
 
-	return QCoreApplication::exec();	// Finally, start the event loop
+	int result = QCoreApplication::exec();	// Finally, start the event loop
+
+	// The main event loop has exited (backend should shout down now)
+	backend->finalize();
+
+	return result;
 }
 
 void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
@@ -138,8 +146,6 @@ void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------- //
-
-
 
 QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
 	: parser(),
@@ -185,7 +191,7 @@ bool QDaemonApplicationPrivate::CommandLineOptions::process(const QStringList & 
 
 	quint32 flags = op & (InstallOperation | UninstallOperation | StartOperation | StopOperation | HelpOperation | FakeOperation);
 	if (qPopulationCount(flags) > 1)  {
-		qWarning("More than one control operation was specified.");
+		qDaemonLog("More than one control operation was specified.", QDaemonLog::ErrorEntry);
 		return false;
 	}
 
