@@ -60,7 +60,7 @@ public:
 	static QDaemonBackend * create(BackendType);
 
 protected:
-	QString name, path, description;
+	QString dir, path, name, description;
 };
 
 class Q_DAEMON_LOCAL DaemonBackendWindows : public BackendWindows
@@ -106,8 +106,11 @@ private:
 	SC_HANDLE openService(int);
 	void closeService(SC_HANDLE);
 
+	static bool addToSystemPath(const QString &);
+
 private:
 	SC_HANDLE manager;
+	static LPCTSTR pathRegistryKey;
 };
 
 QT_END_NAMESPACE

@@ -4,6 +4,7 @@
 
 #include <QFileInfo>
 #include <QElapsedTimer>
+#include <QDir>
 
 static const qint32 serviceWaitHint = 1000;			// Just a service control sugar (1 second)
 
@@ -127,8 +128,11 @@ BackendWindows::~BackendWindows()
 
 bool BackendWindows::initialize()
 {
+
+	QFileInfo appFileInfo(QDaemonApplication::applicationFilePath());
+	dir = appFileInfo.dir().absolutePath();
+	path = appFileInfo.absoluteFilePath();
 	name = QDaemonApplication::applicationName();
-	path = QFileInfo(QDaemonApplication::applicationFilePath()).absoluteFilePath();
 	description = QDaemonApplication::applicationDescription();
 
 	if (name.size() > 256)  {	// Max length for service names is 256 chars - https://msdn.microsoft.com/en-us/library/windows/desktop/ms682450(v=vs.85).aspx
@@ -210,6 +214,7 @@ bool DaemonBackendWindows::uninstall()
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 static const qint32 serviceNotifyTimeout = 30000;			// Up to 30 seconds
+LPCTSTR ControllerBackendWindows::pathRegistryKey = TEXT("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment");
 
 ControllerBackendWindows::ControllerBackendWindows()
 	: manager(NULL)
@@ -332,9 +337,11 @@ bool ControllerBackendWindows::install()
 			qDaemonLog(QStringLiteral("Couldn't set the service description (Error code %1).").arg(GetLastError()), QDaemonLog::WarningEntry);
 	}
 
-	// TODO: Add the service location to the PATH
-
 	closeService(service);
+
+	if (addToSystemPath(dir))		// Add the service location to the PATH
+		SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM) L"Environment", SMTO_ABORTIFHUNG, serviceNotifyTimeout, NULL);		// Notify others of the change (don't catch errors as they aren't exactly reported with HWND_BROADCAST)
+
 	return true;
 }
 
@@ -344,7 +351,14 @@ bool ControllerBackendWindows::uninstall()
 	if (!service)
 		return false;
 
-	// TODO: Remove the service location from the PATH
+	// IMPORTANT
+	// Do not remove the path we inserted into to the environment variable, as it may be shared with others, so we'd do a terrible mess!
+	// If someone wants to clean it up he/she should do it manually!
+	// TODO
+	// Add the option for path removal as a command line switch
+
+	// Notify others of the change (don't catch errors as they aren't exactly reported with HWND_BROADCAST)
+	SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM) L"Environment", SMTO_ABORTIFHUNG, serviceNotifyTimeout, NULL);
 
 	// Delete the service
 	if (!DeleteService(service))  {
@@ -447,4 +461,46 @@ void ControllerBackendWindows::closeService(SC_HANDLE service)
 {
 	if (service && !CloseServiceHandle(service))
 		qDaemonLog(QStringLiteral("Error while closing the service handle (Error code %1).").arg(GetLastError()), QDaemonLog::WarningEntry);
+}
+
+bool ControllerBackendWindows::addToSystemPath(const QString & dir)
+{
+	// Retrieve the system path
+	HKEY regKey;
+	LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, pathRegistryKey, 0, KEY_QUERY_VALUE | KEY_SET_VALUE, &regKey);		//  RegOpenKeyTransacted breaks compatibility with Windows XP
+	if (result != ERROR_SUCCESS)  {
+		qDaemonLog(QStringLiteral("Couldn't open the PATH registry key. You may need to update the system path manually."), QDaemonLog::WarningEntry);
+		return false;
+	}
+
+	TCHAR buffer[2048];		// Max size for %PATH% is 2048 (not using constexpr, cause M$ support that from VC 2015 onward)
+	DWORD bufferSize = sizeof(buffer);
+	if (RegQueryValueEx(regKey, TEXT("Path"), 0, NULL, (LPBYTE) buffer, &bufferSize) != ERROR_SUCCESS)  {
+		qDaemonLog(QStringLiteral("Couldn't retrieve the PATH registry key. You may need to update the system path manually."), QDaemonLog::WarningEntry);
+		RegCloseKey(regKey);
+		return false;
+	}
+
+	QString path(reinterpret_cast<const QChar * const>(buffer), bufferSize / sizeof(TCHAR) - 1);		// Continuing to chop any type safety away
+	QStringList directories = path.split(';', QString::SkipEmptyParts);
+	// First check if we already have that directory in the path
+	for (QStringList::ConstIterator i = directories.constBegin(), end = directories.constEnd(); i != end; i++)  {
+		if (dir.compare(QDir::cleanPath(i->trimmed()), Qt::CaseInsensitive) == 0)
+			return true;		// Nothing to do, already in the system path
+	}
+
+	directories.append(dir);
+	path = directories.join(';');
+
+	// So far so good. Save the new system path
+	bool ok = true;
+
+	result = RegSetValueEx(regKey, TEXT("Path"), 0, REG_SZ, reinterpret_cast<const BYTE *>(path.utf16()), path.size() * sizeof(TCHAR) + 1);
+	if (result != ERROR_SUCCESS)  {
+		qDaemonLog(QStringLiteral("Couldn't save the PATH registry key. You may need to update the system path manually."), QDaemonLog::WarningEntry);
+		ok = false;
+	}
+
+	RegCloseKey(regKey);
+	return ok;
 }
