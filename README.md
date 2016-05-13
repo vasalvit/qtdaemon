@@ -16,6 +16,7 @@ There are two exposed classes `QDaemonApplication` and `QDaemonLog`.
 * `uninstalled()` - emitted when the application is run as a controlling terminal, notifying the user that the daemon/service been uninstalled.
 
 `QDaemonLog` is the logging component for the daemon. It's set up to output on `stdout` when the application is run as controlling terminal, and to a file (named after the application with .log extension) when the application is ran as daemon/service.
+The logging component can be used by the user through `QDaemonLog & qDaemonLog();` coupled with `QDaemonLog & << (const QString &)` or `void qDaemonLog(const QString &, QDaemonLog::EntrySeverity)`. Currently the format of the output messages is fixed.
 
 # Dependencies #
 
