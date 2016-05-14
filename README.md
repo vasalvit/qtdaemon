@@ -20,9 +20,9 @@ The logging component can be used by the user through `QDaemonLog & qDaemonLog()
 
 # Dependencies #
 
-Linux: QtCore and QtDBus modules are required
+Linux: `QtCore` and `QtDBus` modules are required
 
-Windows: QtCore + the native libraries AdvApi and User32 (headers and .lib files should be provided through the windows SDKs)
+Windows: `QtCore` + the native libraries `AdvApi` and `User32` (headers and import library files should be provided through the windows SDKs)
 
 # Building #
 
@@ -43,8 +43,8 @@ The application behaviour is controlled through command line switches. When no s
     * `--dbus-prefix=<path>` provide a prefix path for the d-bus configuration file.
     * `--initdPrefix=<path>` provide a prefix path for the `init.d` script.
 
-* `--uninstall`, `-u` Run the application as controlling terminal and attempt to stop the daemon/service.
-* `--help`, `-h` Provide help text on the command line switches
+* `--uninstall`, `-u` Run the application as controlling terminal and attempt to uninstall the daemon/service.
+* `--help`, `-h` Provide help text on the command line switches.
 * `--fake` Runs in pseudo-daemon mode. The application object will emit the `daemonized()` signal, but will not try to detach itself from the running terminal (Linux) and will not contact the service control manager (Windows). It is provided as a means to debug the daemon/service.
 
 # Daemon/service installation #
@@ -52,6 +52,8 @@ The application behaviour is controlled through command line switches. When no s
 Aside from using the specified installation/uninstallation switches there may be additional steps required to register the application.
 
 Linux: after successfully running the application with `--install` it is still required to invoke `insserv` (or equivalent) command to register the generated `init.d` script.
+
+Windows: after removal of the service the PATH is currently left unchanged (meaning it has to be cleaned manually).
 
 # License #
 
