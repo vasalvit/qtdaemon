@@ -33,6 +33,8 @@ public:
 
 protected:
 	QString serviceName;
+	QString path;
+	QString executable;
 	QDBusConnection dbus;
 	QTextStream out;
 };

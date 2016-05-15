@@ -1,6 +1,6 @@
 #include "qdaemonbackend_unix.h"
+#include "qdaemonapplication.h"
 
-#include <QCoreApplication>
 #include <QProcess>
 #include <QThread>
 #include <QDir>
@@ -24,7 +24,7 @@ BackendUnix::BackendUnix()
 	: QDaemonBackend(), dbus(QStringLiteral("QtDaemon")), out(stdout)
 {
 	// Get the service name
-	QString domain = QCoreApplication::organizationDomain();
+	QString domain = QDaemonApplication::organizationDomain();
 	if (!domain.isEmpty())  {
 		QStringList elements = domain.split('.');
 		std::reverse(elements.begin(), elements.end());
@@ -33,7 +33,8 @@ BackendUnix::BackendUnix()
 	else
 		serviceName = QStringLiteral("io.qt");
 
-	QString path = QCoreApplication::applicationFilePath();
+	path = QDaemonApplication::applicationFilePath();
+	executable = QFileInfo(path).completeBaseName();
 	serviceName += QStringLiteral(".QtDaemon-") + QString::number(qChecksum(qPrintable(path), path.length()));
 }
 
@@ -197,7 +198,7 @@ bool ControllerBackendUnix::start()
 	}
 
 	// The daemon is (most probably) not running, so start it
-	if (!QProcess::startDetached(QCoreApplication::applicationFilePath()))
+	if (!QProcess::startDetached(QDaemonApplication::applicationFilePath()))
 		return false;
 
 	// Repeat the call to make sure the communication is Ok
@@ -256,7 +257,7 @@ bool ControllerBackendUnix::install()
 		return false;
 	}
 
-	QString appFileName = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
+	QString appFileName = QFileInfo(QDaemonApplication::applicationFilePath()).fileName();
 
 	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(appFileName));
 	if (dbusConf.exists())  {
@@ -310,7 +311,11 @@ bool ControllerBackendUnix::install()
 
 	// Read the init.d script, do the substitution and write to disk
 	data = fin.readAll();
-	data.replace(QStringLiteral("%%DAEMON%%"), QCoreApplication::applicationFilePath());
+
+	data.replace(QStringLiteral("%%DAEMON%%"), path)
+			.replace(QStringLiteral("%%DAEMON_EXECUTABLE%%"), executable)
+			.replace(QStringLiteral("%%DAEMON_NAME%%"), QDaemonApplication::applicationName())
+			.replace(QStringLiteral("%%DAEMON_DESCRIPTION%%"), QDaemonApplication::applicationDescription());
 	fout << data;
 
 	if (fout.status() != QTextStream::Ok)
@@ -326,7 +331,7 @@ bool ControllerBackendUnix::install()
 bool ControllerBackendUnix::uninstall()
 {
 	QString dbusPath = arguments.value(dbusPrefix), initdPath = arguments.value(initdPrefix);
-	QString appFileName = QFileInfo(QCoreApplication::applicationFilePath()).fileName();
+	QString appFileName = QFileInfo(QDaemonApplication::applicationFilePath()).fileName();
 
 	QFile dbusConf(QDir(dbusPath).filePath(serviceName + QStringLiteral(".conf"))), initdFile(QDir(initdPath).filePath(appFileName));
 	if (dbusConf.exists() && !dbusConf.remove())  {

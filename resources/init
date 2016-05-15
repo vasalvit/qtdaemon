@@ -1,6 +1,15 @@
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:          %%DAEMON_EXECUTABLE%%
+# Required-Start:    $local_fs $syslog $remote_fs $network dbus
+# Required-Stop:     $local_fs $syslog $remote_fs $network dbus
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: %%DAEMON_NAME%%
+# Description:       %%DAEMON_DESCRIPTION%%
+### END INIT INFO
 
-HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|help}"
+HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|force-reload|help}"
 
 case "$1" in
 	start)
@@ -9,6 +18,8 @@ case "$1" in
 	stop)
 	   %%DAEMON%% --stop
 	   ;;
+	force-reload) # Just fall through
+	   ;&
 	restart)
 	   %%DAEMON%% --stop
 	   %%DAEMON%% --start
