@@ -21,6 +21,8 @@ The `QDaemonLog` methods (and global functions) are **thread-safe**.
 
 # Dependencies #
 
+**The library requires Qt 5.6 or later.**
+
 Linux: `QtCore` and `QtDBus` modules are required
 
 Windows: `QtCore` + the native libraries `AdvApi` and `User32` (headers and import library files should be provided through the windows SDKs)
