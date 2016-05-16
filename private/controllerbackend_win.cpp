@@ -533,9 +533,11 @@ bool ControllerBackendWindows::install()
 
 	if (parser.isSet(updatePathOption))  {
 		WindowsSystemPath path;
-		return path.addEntry(QCoreApplication::applicationDirPath());
+		if (!path.addEntry(QCoreApplication::applicationDirPath()))
+			return false;
 	}
 
+	QMetaObject::invokeMethod(qApp, "installed", Qt::QueuedConnection);
 	return true;
 }
 
@@ -551,9 +553,11 @@ bool ControllerBackendWindows::uninstall()
 
 	if (parser.isSet(updatePathOption))  {
 		WindowsSystemPath path;
-		return path.removeEntry(QCoreApplication::applicationDirPath());
+		if (!path.removeEntry(QCoreApplication::applicationDirPath()))
+			return false;
 	}
 
+	QMetaObject::invokeMethod(qApp, "uninstalled", Qt::QueuedConnection);
 	return true;
 }
 
