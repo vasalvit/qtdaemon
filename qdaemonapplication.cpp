@@ -1,5 +1,8 @@
 #include "qdaemonapplication.h"
 #include "private/qdaemonapplication_p.h"
+#include "private/qabstractdaemonbackend.h"
+
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -22,7 +25,23 @@ int QDaemonApplication::exec()
 		return -1;
 	}
 
-	return app->d_ptr->exec();
+	QStringList arguments = QDaemonApplication::arguments();
+	QDaemonApplicationPrivate * const d = app->d_ptr;
+
+	QCommandLineOption daemonOption(QStringLiteral("d"));
+	daemonOption.setHidden(true);
+
+	d->parser.addOption(daemonOption);
+	d->parser.parse(arguments);
+
+	// Create the appropriate backend
+	bool isDaemon = d->parser.isSet(daemonOption);
+	QScopedPointer<QAbstractDaemonBackend> backend(d->createBackend(isDaemon));
+
+	// Reparse with the options that the backends may have added in their constructors
+	d->parser.parse(arguments);
+
+	return backend->exec();
 }
 
 QDaemonApplication * QDaemonApplication::instance()

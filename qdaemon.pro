@@ -26,9 +26,11 @@ MAKEFILE = qdaemon.make
 
 SOURCES += qdaemonapplication.cpp \
 	qdaemonlog.cpp \
-	private/qdaemonapplication_p.cpp \
-	private/qdaemonbackend.cpp \
-	private/qdaemonlog_p.cpp
+	private/qdaemonlog_p.cpp \
+    private/controllerbackend_linux.cpp \
+    private/qdaemonapplication_p.cpp \
+    private/daemonbackend_linux.cpp \
+    private/qabstractdaemonbackend.cpp
 
 HEADERS += qdaemon-global.h \
 	QDaemonApplication \
@@ -36,12 +38,15 @@ HEADERS += qdaemon-global.h \
 	qdaemonapplication.h \
 	qdaemonlog.h \
 	private/qdaemonapplication_p.h \
-	private/qdaemonbackend.h \
-	private/qdaemonlog_p.h
+	private/qdaemonlog_p.h \
+    private/daemonbackend_linux.h \
+    private/controllerbackend_linux.h \
+    private/qabstractdaemonbackend.h
 
 unix  {
-	SOURCES += private/qdaemonbackend_unix.cpp
-	HEADERS += private/qdaemonbackend_unix.h
+	SOURCES +=
+
+	HEADERS +=
 
 	target.path = /usr/lib
 	INSTALLS += target
@@ -54,8 +59,10 @@ unix  {
 		qdaemon.qrc
 }
 win32  {
-	SOURCES += private/qdaemonbackend_win.cpp
-	HEADERS += private/qdaemonbackend_win.h
+	SOURCES += private/qdaemonbackend_win.cpp \
+		private/qcontrollerbackend_win.cpp
+	HEADERS += private/win/qdaemonbackend_win.h \
+		private/qcontrollerbackend_win.h
 
 	LIBS += -luser32 -ladvapi32
 #	DESTDIR = $$OUT_PWD	# For shadow building on Windows

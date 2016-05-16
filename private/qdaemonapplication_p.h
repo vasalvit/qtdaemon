@@ -2,13 +2,14 @@
 #define QDAEMONAPPLICATIONPRIVATE_H
 
 #include "qdaemon-global.h"
-#include "qdaemonbackend.h"
 #include "qdaemonlog.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 
 QT_BEGIN_NAMESPACE
+
+class QAbstractDaemonBackend;
 
 class QDaemonApplication;
 class Q_DAEMON_EXPORT QDaemonApplicationPrivate
@@ -34,14 +35,18 @@ private:
 	static void processSignalHandler(int);
 
 private:
-	QDaemonApplication * q_ptr;
-	QDaemonBackend * backend;
-	bool autoQuit;
-	QDaemonLog log;
+	QAbstractDaemonBackend * createBackend(bool);
 
+private:
+	QDaemonApplication * q_ptr;
+	QDaemonLog log;
+	bool autoQuit;
+
+	QCommandLineParser parser;
+
+/*
 	class CommandLineOptions
 	{
-		// TODO: Support prefix paths for installation of dbus conf file and init.d template script
 	public:
 		CommandLineOptions();
 
@@ -55,7 +60,7 @@ private:
 		QCommandLineParser parser;
 		QCommandLineOption installOption, uninstallOption, startOption, stopOption, fakeOption, helpOption;
 		Operations op;
-	} commandLine;
+	} commandLine;*/
 
 	static QString description;
 };

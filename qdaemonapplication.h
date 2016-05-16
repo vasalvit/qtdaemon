@@ -26,7 +26,7 @@ public:
 	static QString applicationDescription();
 	static void setApplicationDescription(const QString &);
 signals:
-	void daemonized();
+	void daemonized(QStringList);
 
 	void started();
 	void stopped();

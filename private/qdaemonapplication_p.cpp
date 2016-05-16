@@ -1,18 +1,18 @@
 #include "qdaemonapplication_p.h"
 #include "qdaemonapplication.h"
 
-#include <QCommandLineParser>
-#include <QCommandLineOption>
-#include <QTextStream>
-
 #include <csignal>
 
 #if defined(Q_OS_WIN)
-#include "qdaemonbackend_win.h"
-typedef BackendWindows DaemonBackend;
+#include "daemonbackend_win.h"
+#include "controllerbackend_win.h"
+typedef DaemonBackendWindows DaemonBackend;
+typedef ControllerBackendWindows ControllerBackend;
 #else
-#include "qdaemonbackend_unix.h"
-typedef BackendUnix DaemonBackend;
+#include "daemonbackend_linux.h"
+#include "controllerbackend_linux.h"
+typedef DaemonBackendLinux DaemonBackend;
+typedef ControllerBackendLinux ControllerBackend;
 #if !defined(Q_OS_LINUX)
 #warning This library is not supported on your platform.
 #endif
@@ -23,7 +23,7 @@ QT_BEGIN_NAMESPACE
 QString QDaemonApplicationPrivate::description;
 
 QDaemonApplicationPrivate::QDaemonApplicationPrivate(QDaemonApplication * q)
-	: q_ptr(q), backend(nullptr), autoQuit(true)
+	: q_ptr(q), autoQuit(true)
 {
 	std::signal(SIGTERM, QDaemonApplicationPrivate::processSignalHandler);
 	std::signal(SIGINT, QDaemonApplicationPrivate::processSignalHandler);
@@ -32,95 +32,6 @@ QDaemonApplicationPrivate::QDaemonApplicationPrivate(QDaemonApplication * q)
 
 QDaemonApplicationPrivate::~QDaemonApplicationPrivate()
 {
-	delete backend;
-}
-
-int QDaemonApplicationPrivate::exec()
-{
-	Q_Q(QDaemonApplication);
-
-	// Process the command line
-	if (!commandLine.process(q->arguments()))
-		return -1;
-
-	Operations op = commandLine.operations();
-
-	// Handle the help option directly
-	if (op.testFlag(HelpOperation))  {
-		QTextStream out(stdout);
-		out << commandLine.helpText();
-
-		return 0;
-	}
-	else if (op.testFlag(FakeOperation))  {
-		// Runs the daemon in fake mode. It will emit the daemonized() signal and will start the event loop, but will not detach from the controlling terminal.
-		// Control will not be available, except through the debugger (or through POSIX signals).
-		QMetaObject::invokeMethod(q, "daemonized", Qt::QueuedConnection);
-		return QCoreApplication::exec();
-	}
-
-	// Create the backend
-	if (op)
-		backend = DaemonBackend::create(QDaemonBackend::ControllerType);		// Controller type backend (default logging to stdout
-	else  {
-		log.setLogType(QDaemonLog::LogToFile);
-		backend = DaemonBackend::create(QDaemonBackend::DaemonType);		// Controller type backend (default logging to stdout
-	}
-
-	// Set any additional arguments if needed
-#ifdef Q_OS_LINUX
-	DaemonBackend::Arguments arguments;
-	arguments.insert(DaemonBackend::dbusPrefix, commandLine.value(DaemonBackend::dbusPrefix));
-	arguments.insert(DaemonBackend::initdPrefix, commandLine.value(DaemonBackend::initdPrefix));
-
-	backend->setArguments(arguments);
-#endif
-
-	if (!backend->initialize())  {
-		qDaemonLog("The daemon controller backend failed to initialize", QDaemonLog::ErrorEntry);
-		return -1;
-	}
-
-	bool status = true;
-	if (op.testFlag(InstallOperation))  {
-		if (backend->install())
-			QMetaObject::invokeMethod(q, "installed", Qt::QueuedConnection);
-		else
-			status = false;
-	}
-	else if (op.testFlag(UninstallOperation))  {
-		if (backend->uninstall())
-			QMetaObject::invokeMethod(q, "uninstalled", Qt::QueuedConnection);
-		else
-			status = false;
-	}
-	else if (op.testFlag(StartOperation))  {
-		if (backend->start())
-			QMetaObject::invokeMethod(q, "started", Qt::QueuedConnection);
-		else
-			status = false;
-	}
-	else if (op.testFlag(StopOperation))  {
-		if (backend->stop())
-			QMetaObject::invokeMethod(q, "stopped", Qt::QueuedConnection);
-		else
-			status = false;
-	}
-	else
-		QMetaObject::invokeMethod(q, "daemonized", Qt::QueuedConnection);
-
-
-	if (!status)
-		return -1;
-	else if (op && autoQuit)
-		QMetaObject::invokeMethod(q, "quit", Qt::QueuedConnection);
-
-	int result = QCoreApplication::exec();	// Finally, start the event loop
-
-	// The main event loop has exited (backend should shout down now)
-	backend->finalize();
-
-	return result;
 }
 
 void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
@@ -133,7 +44,6 @@ void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
 	case SIGINT:
 		{
 			QDaemonApplication * app = QDaemonApplication::instance();
-
 			if (app)
 				app->quit();
 			else
@@ -145,9 +55,19 @@ void QDaemonApplicationPrivate::processSignalHandler(int signalNumber)
 	}
 }
 
+QAbstractDaemonBackend * QDaemonApplicationPrivate::createBackend(bool isDaemon)
+{
+	if (isDaemon)  {
+		log.setLogType(QDaemonLog::LogToFile);
+		return new DaemonBackend(parser);
+	}
+	else
+		return new ControllerBackend(parser, autoQuit);
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
-QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
+/*QDaemonApplicationPrivate::CommandLineOptions::CommandLineOptions()
 	: parser(),
 	  installOption(QStringList() << "i" << "install", QCoreApplication::translate("main", "Install the daemon")),
 	  uninstallOption(QStringList() << "u" << "uninstall", QCoreApplication::translate("main", "Uninstall the daemon")),
@@ -212,5 +132,5 @@ inline QString QDaemonApplicationPrivate::CommandLineOptions::value(const QStrin
 {
 	return parser.value(name);
 }
-
+*/
 QT_END_NAMESPACE

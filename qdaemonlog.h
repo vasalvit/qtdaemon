@@ -3,7 +3,6 @@
 
 #include "qdaemon-global.h"
 
-// TODO: Possibly make the logger sync between different processes (controller and daemon)
 // All methods (without the constructor and destructor) are thread-safe.
 
 class QDaemonLogPrivate;

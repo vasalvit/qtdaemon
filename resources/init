@@ -1,19 +1,19 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          %%DAEMON_EXECUTABLE%%
-# Required-Start:    $local_fs $syslog $remote_fs $network dbus
-# Required-Stop:     $local_fs $syslog $remote_fs $network dbus
+# Provides:          %%EXECUTABLE%%
+# Required-Start:    $local_fs $syslog dbus
+# Required-Stop:     $local_fs $syslog dbus
 # Default-Start:     2 3 4 5
 # Default-Stop:
-# Short-Description: %%DAEMON_NAME%%
-# Description:       %%DAEMON_DESCRIPTION%%
+# Short-Description: %%NAME%%
+# Description:       %%DESCRIPTION%%
 ### END INIT INFO
 
 HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|force-reload|help}"
 
 case "$1" in
 	start)
-	   %%DAEMON%% --start
+	   %%DAEMON%% --start %%ARGUMENTS%%
 	   ;;
 	stop)
 	   %%DAEMON%% --stop
@@ -22,10 +22,10 @@ case "$1" in
 	   ;&
 	restart)
 	   %%DAEMON%% --stop
-	   %%DAEMON%% --start
+	   %%DAEMON%% --start %%ARGUMENTS%%
 	   ;;
 	uninstall)
-	   %%DAEMON%% --uninstall
+	   %%DAEMON%% --uninstall --initd-prefix=%%INITD_PREFIX%% --dbus-prefix=%%DBUS_PREFIX%%
 	   ;;
 	help)
 	   echo $HELP_TEXT
