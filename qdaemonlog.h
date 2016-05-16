@@ -3,7 +3,7 @@
 
 #include "qdaemon-global.h"
 
-// All methods (without the constructor and destructor) are thread-safe.
+QT_BEGIN_NAMESPACE
 
 class QDaemonLogPrivate;
 class Q_DAEMON_EXPORT QDaemonLog
@@ -35,5 +35,7 @@ private:
 Q_DAEMON_EXPORT QDaemonLog & qDaemonLog();
 Q_DAEMON_EXPORT void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity = QDaemonLog::NoticeEntry);
 // ---------------------------------------------------------------------------------------------------------------------- //
+
+QT_END_NAMESPACE
 
 #endif // QDAEMONLOG_H

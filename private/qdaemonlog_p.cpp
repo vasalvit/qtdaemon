@@ -7,6 +7,8 @@
 #include <QFileInfo>
 #include <QMutexLocker>
 
+QT_BEGIN_NAMESPACE
+
 QDaemonLog * QDaemonLogPrivate::logger = NULL;
 
 QDaemonLogPrivate::QDaemonLogPrivate()
@@ -49,3 +51,5 @@ void QDaemonLogPrivate::write(const QString & message, QDaemonLog::EntrySeverity
 
 	logStream << formattedMessage << endl;
 }
+
+QT_END_NAMESPACE

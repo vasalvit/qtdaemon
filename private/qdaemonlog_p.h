@@ -7,6 +7,8 @@
 #include <QTextStream>
 #include <QMutex>
 
+QT_BEGIN_NAMESPACE
+
 class QDaemonLogPrivate
 {
 	friend class QDaemonLog;
@@ -29,5 +31,7 @@ private:
 
 	static QDaemonLog * logger;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDAEMONLOG_P_H

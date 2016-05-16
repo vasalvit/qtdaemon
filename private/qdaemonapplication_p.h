@@ -41,26 +41,7 @@ private:
 	QDaemonApplication * q_ptr;
 	QDaemonLog log;
 	bool autoQuit;
-
 	QCommandLineParser parser;
-
-/*
-	class CommandLineOptions
-	{
-	public:
-		CommandLineOptions();
-
-		bool process(const QStringList & arguments);
-
-		QString helpText() const;
-		Operations operations() const;
-
-		QString value(const QString &) const;
-	private:
-		QCommandLineParser parser;
-		QCommandLineOption installOption, uninstallOption, startOption, stopOption, fakeOption, helpOption;
-		Operations op;
-	} commandLine;*/
 
 	static QString description;
 };

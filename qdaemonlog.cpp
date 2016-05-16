@@ -3,6 +3,8 @@
 
 #include <QMutexLocker>
 
+QT_BEGIN_NAMESPACE
+
 QDaemonLog::QDaemonLog()
 	: d_ptr(new QDaemonLogPrivate)
 {
@@ -88,3 +90,5 @@ void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity)
 
 	d->write(message, severity);
 }
+
+QT_END_NAMESPACE
