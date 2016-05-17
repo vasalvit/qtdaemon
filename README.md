@@ -29,9 +29,9 @@ Windows: `QtCore` + the native libraries `AdvApi` and `User32` (headers and impo
 
 # Building #
 
-Build as any one Qt compatible library.
+Build as any one Qt compatible library (the library make file is called `qdaemon.make`).
 
-Run `qmake` and then `make`/`nmake` or equivalent.
+Run `qmake` and then `make -f qdaemon.make`/`nmake /F qdaemon.make` or equivalent.
 
 # Running #
 
