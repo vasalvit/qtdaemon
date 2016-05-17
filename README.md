@@ -69,7 +69,7 @@ The application behaviour is controlled through command line switches. When no s
     Linux only (use the init.d script instead):
 
     * `--dbus-prefix=<path>` provide a prefix path for the d-bus configuration file.
-    * `--initdPrefix=<path>` provide a prefix path for the `init.d` script.
+    * `--initd-prefix=<path>` provide a prefix path for the `init.d` script.
 
     Windows only:
 
