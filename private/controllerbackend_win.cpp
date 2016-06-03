@@ -423,63 +423,16 @@ private:
 };
 
 LPCTSTR WindowsSystemPath::pathRegistryKey = TEXT("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment");
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 // --- ControllerBackendWindows --------------------------------------------------------------------------------------------------------------------------- //
 // -------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
-ControllerBackendWindows::ControllerBackendWindows(QCommandLineParser & parser, bool aq)
-	: QAbstractDaemonBackend(parser), autoQuit(aq),
-	  installOption(QStringList() << "i" << "install", QStringLiteral("Install the daemon")),
-	  uninstallOption(QStringList() << "u" << "uninstall", QStringLiteral("Uninstall the daemon")),
-	  startOption(QStringList() << "s" << "start", QStringLiteral("Start the daemon")),
-	  stopOption(QStringList() << "t" << "stop", QStringLiteral("Stop the daemon")),
-	  fakeOption(QStringLiteral("fake"), QStringLiteral("Run the daemon in fake mode (for debugging).")),
-	  updatePathOption(QStringLiteral("update-path"), QStringLiteral("Update the system PATH on install/uninstall."))
+ControllerBackendWindows::ControllerBackendWindows(QCommandLineParser & parser, bool autoQuit)
+	: QAbstractControllerBackend(parser, autoQuit),
+	  updatePathOption(QStringLiteral("update-path"), QCoreApplication::translate("main", "Update the system PATH on install/uninstall."))
 {
-	parser.addOption(installOption);
-	parser.addOption(uninstallOption);
-	parser.addOption(startOption);
-	parser.addOption(stopOption);
-	parser.addOption(fakeOption);
 	parser.addOption(updatePathOption);
-	parser.addHelpOption();
-}
-
-ControllerBackendWindows::~ControllerBackendWindows()
-{
-}
-
-int ControllerBackendWindows::exec()
-{
-	bool status = true;
-	if (parser.isSet(startOption))
-		status = start();
-	else if (parser.isSet(stopOption))
-		status = stop();
-	else if (parser.isSet(installOption))
-		status = install();
-	else if (parser.isSet(uninstallOption))
-		status = uninstall();
-	else if (parser.isSet(fakeOption))  {
-		autoQuit = false;	// Enforce not quitting
-
-		QStringList arguments = parser.positionalArguments();
-		arguments.prepend(QDaemonApplication::applicationFilePath());
-
-		QMetaObject::invokeMethod(qApp, "daemonized", Qt::QueuedConnection, Q_ARG(QStringList, arguments));
-	}
-	else  {		// Everything else + the help option, show help and enforce quit
-		qDaemonLog() << parser.helpText();
-		return 0;
-	}
-
-	if (!status)
-		return BackendFailed;
-
-	if (autoQuit)
-		QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
-
-	return QCoreApplication::exec();
 }
 
 bool ControllerBackendWindows::start()

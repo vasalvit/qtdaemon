@@ -4,7 +4,6 @@
 #include "qdaemonlog.h"
 
 #include <QMetaObject>
-#include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QTextStream>
@@ -30,61 +29,13 @@ const QString ControllerBackendLinux::dbusPrefix = QStringLiteral("dbus-prefix")
 const QString ControllerBackendLinux::defaultInitPath = QStringLiteral("/etc/init.d");
 const QString ControllerBackendLinux::defaultDBusPath = QStringLiteral("/etc/dbus-1/system.d");
 
-ControllerBackendLinux::ControllerBackendLinux(QCommandLineParser & parser, bool aq)
-	: QAbstractDaemonBackend(parser), autoQuit(aq),
-	  installOption(QStringList() << "i" << "install", QStringLiteral("Install the daemon")),
-	  uninstallOption(QStringList() << "u" << "uninstall", QStringLiteral("Uninstall the daemon")),
-	  startOption(QStringList() << "s" << "start", QStringLiteral("Start the daemon")),
-	  stopOption(QStringList() << "t" << "stop", QStringLiteral("Stop the daemon")),
-	  fakeOption(QStringLiteral("fake"), QStringLiteral("Run the daemon in fake mode (for debugging).")),
-	  dbusPrefixOption(dbusPrefix, QStringLiteral("Sets the path for the installed dbus configuration file"), QStringLiteral("path"), defaultDBusPath),
-	  initdPrefixOption(initdPrefix, QStringLiteral("Sets the path for the installed init.d script"), QStringLiteral("path"), defaultInitPath)
+ControllerBackendLinux::ControllerBackendLinux(QCommandLineParser & parser, bool autoQuit)
+	: QAbstractControllerBackend(parser, autoQuit),
+	  dbusPrefixOption(dbusPrefix, QCoreApplication::translate("main", "Sets the path for the installed dbus configuration file"), QStringLiteral("path"), defaultDBusPath),
+	  initdPrefixOption(initdPrefix, QCoreApplication::translate("main", "Sets the path for the installed init.d script"), QStringLiteral("path"), defaultInitPath)
 {
-	parser.addOption(installOption);
-	parser.addOption(uninstallOption);
-	parser.addOption(startOption);
-	parser.addOption(stopOption);
-	parser.addOption(fakeOption);
 	parser.addOption(dbusPrefixOption);
 	parser.addOption(initdPrefixOption);
-	parser.addHelpOption();
-}
-
-ControllerBackendLinux::~ControllerBackendLinux()
-{
-}
-
-int ControllerBackendLinux::exec()
-{
-	bool status = true;
-	if (parser.isSet(startOption))
-		status = start();
-	else if (parser.isSet(stopOption))
-		status = stop();
-	else if (parser.isSet(installOption))
-		status = install();
-	else if (parser.isSet(uninstallOption))
-		status = uninstall();
-	else if (parser.isSet(fakeOption))  {
-		autoQuit = false;	// Enforce not quitting
-
-		QStringList arguments = parser.positionalArguments();
-		arguments.prepend(QDaemonApplication::applicationFilePath());
-
-		QMetaObject::invokeMethod(qApp, "daemonized", Qt::QueuedConnection, Q_ARG(QStringList, arguments));
-	}
-	else  {		// Everything else + the help option, show help and enforce quit
-		qDaemonLog() << parser.helpText();
-		return 0;
-	}
-
-	if (!status)
-		return BackendFailed;
-
-	if (autoQuit)
-		QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
-
-	return QCoreApplication::exec();
 }
 
 bool ControllerBackendLinux::start()
@@ -198,7 +149,7 @@ bool ControllerBackendLinux::install()
 	dbusPath = QDir(dbusPath).absolutePath();
 	initdPath = QDir(initdPath).absolutePath();
 
-	QString dbusFilePath = QDir(initdPath).filePath(service + QStringLiteral(".conf"));
+	QString dbusFilePath = QDir(dbusPath).filePath(service + QStringLiteral(".conf"));
 	QString initdFilePath = QDir(initdPath).filePath(executable);
 
 	QFile dbusConf(dbusFilePath), initdFile(initdFilePath);

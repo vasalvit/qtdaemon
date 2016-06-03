@@ -11,29 +11,19 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_DAEMON_LOCAL ControllerBackendWindows : public QAbstractDaemonBackend
+class Q_DAEMON_LOCAL ControllerBackendWindows : public QAbstractControllerBackend
 {
 	Q_DISABLE_COPY(ControllerBackendWindows)
 
 public:
 	ControllerBackendWindows(QCommandLineParser &, bool);
-	~ControllerBackendWindows() override;
 
-	int exec() override;
-
-	bool start();
-	bool stop();
-	bool install();
-	bool uninstall();
+	bool start() override;
+	bool stop() override;
+	bool install() override;
+	bool uninstall() override;
 
 private:
-	bool autoQuit;
-
-	const QCommandLineOption installOption;
-	const QCommandLineOption uninstallOption;
-	const QCommandLineOption startOption;
-	const QCommandLineOption stopOption;
-	const QCommandLineOption fakeOption;
 	const QCommandLineOption updatePathOption;
 };
 

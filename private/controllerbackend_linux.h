@@ -3,36 +3,24 @@
 
 #include "qabstractdaemonbackend.h"
 
-#include <QCommandLineOption>
-
 QT_BEGIN_NAMESPACE
 
 class QDBusAbstractInterface;
-class Q_DAEMON_LOCAL ControllerBackendLinux : public QAbstractDaemonBackend
+class Q_DAEMON_LOCAL ControllerBackendLinux : public QAbstractControllerBackend
 {
 	Q_DISABLE_COPY(ControllerBackendLinux)
 
 public:
 	ControllerBackendLinux(QCommandLineParser &, bool);
-	~ControllerBackendLinux() override;
 
-	int exec() override;
-
-	bool start();
-	bool stop();
-	bool install();
-	bool uninstall();
+	bool start() override;
+	bool stop() override;
+	bool install() override;
+	bool uninstall() override;
 
 private:
-	bool autoQuit;
-
 	QDBusAbstractInterface * getDBusInterface();
 
-	const QCommandLineOption installOption;
-	const QCommandLineOption uninstallOption;
-	const QCommandLineOption startOption;
-	const QCommandLineOption stopOption;
-	const QCommandLineOption fakeOption;
 	const QCommandLineOption dbusPrefixOption;
 	const QCommandLineOption initdPrefixOption;
 

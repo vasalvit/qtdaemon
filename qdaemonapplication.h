@@ -15,7 +15,7 @@ class Q_DAEMON_EXPORT QDaemonApplication : public QCoreApplication
 
 public:
 	QDaemonApplication(int & argc, char ** argv);
-	virtual ~QDaemonApplication();
+	~QDaemonApplication() override;
 
 	static int exec();
 	static QDaemonApplication * instance();
