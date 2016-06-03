@@ -381,7 +381,7 @@ private:
 		}
 
 		// Continuing to chop any type safety away
-		QString path(reinterpret_cast<const QChar * const>(buffer), bufferSize / sizeof(TCHAR) - 1);
+		QString path(reinterpret_cast<const QChar * const>(buffer), bufferSize / sizeof(TCHAR));
 
 		// Normalize the paths
 		entries = path.split(';', QString::SkipEmptyParts);
