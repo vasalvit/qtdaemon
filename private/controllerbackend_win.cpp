@@ -371,10 +371,10 @@ private:
 		}
 
 		// Allocate enough to contain the PATH
-		LPTSTR buffer = new TCHAR[bufferSize];
+		LPBYTE buffer = new BYTE[bufferSize];
 
 		// Repeat the query, this time with a buffer to get the actual data
-		if (RegQueryValueEx(registryKey, TEXT("Path"), 0, NULL, reinterpret_cast<LPBYTE>(buffer), &bufferSize) != ERROR_SUCCESS)  {
+		if (RegQueryValueEx(registryKey, TEXT("Path"), 0, NULL, buffer, &bufferSize) != ERROR_SUCCESS)  {
 			qDaemonLog(QStringLiteral("Couldn't retrieve the PATH registry key. You may need to update the system path manually."), QDaemonLog::WarningEntry);
 			delete [] buffer;
 			return false;
