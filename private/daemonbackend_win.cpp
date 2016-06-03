@@ -10,6 +10,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QtDaemon;
+
 static const qint32 serviceWaitHint = 1000;			// Just a service control sugar (1 second)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------- //

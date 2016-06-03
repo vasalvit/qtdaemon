@@ -8,46 +8,50 @@
 QT_BEGIN_NAMESPACE
 
 class QCommandLineParser;
-class Q_DAEMON_LOCAL QAbstractDaemonBackend
+
+namespace QtDaemon
 {
-	Q_DISABLE_COPY(QAbstractDaemonBackend)
+	class Q_DAEMON_LOCAL QAbstractDaemonBackend
+	{
+		Q_DISABLE_COPY(QAbstractDaemonBackend)
 
-public:
-	static const int BackendFailed;
+	public:
+		static const int BackendFailed;
 
-public:
-	QAbstractDaemonBackend(QCommandLineParser &);
-	virtual ~QAbstractDaemonBackend();
+	public:
+		QAbstractDaemonBackend(QCommandLineParser &);
+		virtual ~QAbstractDaemonBackend();
 
-	virtual int exec() = 0;
+		virtual int exec() = 0;
 
-protected:
-	QCommandLineParser & parser;
-};
+	protected:
+		QCommandLineParser & parser;
+	};
 
-class Q_DAEMON_LOCAL QAbstractControllerBackend : public QAbstractDaemonBackend
-{
-	Q_DISABLE_COPY(QAbstractControllerBackend)
+	class Q_DAEMON_LOCAL QAbstractControllerBackend : public QAbstractDaemonBackend
+	{
+		Q_DISABLE_COPY(QAbstractControllerBackend)
 
-public:
-	QAbstractControllerBackend(QCommandLineParser &, bool);
+	public:
+		QAbstractControllerBackend(QCommandLineParser &, bool);
 
-	int exec() override;
+		int exec() override;
 
-	virtual bool start() = 0;
-	virtual bool stop() = 0;
-	virtual bool install() = 0;
-	virtual bool uninstall() = 0;
+		virtual bool start() = 0;
+		virtual bool stop() = 0;
+		virtual bool install() = 0;
+		virtual bool uninstall() = 0;
 
-protected:
-	bool autoQuit;
+	protected:
+		bool autoQuit;
 
-	const QCommandLineOption installOption;
-	const QCommandLineOption uninstallOption;
-	const QCommandLineOption startOption;
-	const QCommandLineOption stopOption;
-	const QCommandLineOption fakeOption;
-};
+		const QCommandLineOption installOption;
+		const QCommandLineOption uninstallOption;
+		const QCommandLineOption startOption;
+		const QCommandLineOption stopOption;
+		const QCommandLineOption fakeOption;
+	};
+}
 
 QT_END_NAMESPACE
 

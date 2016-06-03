@@ -6,6 +6,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QtDaemon;
+
 const int QAbstractDaemonBackend::BackendFailed = -1;
 
 QAbstractDaemonBackend::QAbstractDaemonBackend(QCommandLineParser & prsr)

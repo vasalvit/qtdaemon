@@ -11,6 +11,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QtDaemon;
+
 DaemonBackendLinux::DaemonBackendLinux(QCommandLineParser & arguments)
 	: QAbstractDaemonBackend(arguments)
 {

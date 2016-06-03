@@ -16,6 +16,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QtDaemon;
+
 #if defined(Q_OS_WIN)
 typedef DaemonBackendWindows DaemonBackend;
 typedef ControllerBackendWindows ControllerBackend;

@@ -21,6 +21,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QtDaemon;
+
 static qint32 dbusServiceTimeout = 30000;		// Up to 30 seconds
 static qint32 dbusPollTime = 1000;				// Poll each second on start
 

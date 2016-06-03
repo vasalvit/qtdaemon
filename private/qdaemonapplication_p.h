@@ -9,23 +9,16 @@
 
 QT_BEGIN_NAMESPACE
 
-class QAbstractDaemonBackend;
+namespace QtDaemon
+{
+	class QAbstractDaemonBackend;
+}
 
 class QDaemonApplication;
 class Q_DAEMON_EXPORT QDaemonApplicationPrivate
 {
 	Q_DECLARE_PUBLIC(QDaemonApplication)
 public:
-	enum Operation  {
-		StartOperation = 0x01,
-		StopOperation = 0x02,
-		InstallOperation = 0x04,
-		UninstallOperation = 0x08,
-		HelpOperation = 0x10,
-		FakeOperation = 0x20
-	};
-	Q_DECLARE_FLAGS(Operations, Operation)
-
 	QDaemonApplicationPrivate(QDaemonApplication *);
 	~QDaemonApplicationPrivate();
 
@@ -35,7 +28,7 @@ private:
 	static void processSignalHandler(int);
 
 private:
-	QAbstractDaemonBackend * createBackend(bool);
+	QtDaemon::QAbstractDaemonBackend * createBackend(bool);
 
 private:
 	QDaemonApplication * q_ptr;
@@ -45,8 +38,6 @@ private:
 
 	static QString description;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDaemonApplicationPrivate::Operations)
 
 QT_END_NAMESPACE
 

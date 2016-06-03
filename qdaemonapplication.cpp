@@ -6,6 +6,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace QtDaemon;
+
 QDaemonApplication::QDaemonApplication(int & argc, char ** argv)
 	: QCoreApplication(argc, argv), d_ptr(new QDaemonApplicationPrivate(this))
 {
