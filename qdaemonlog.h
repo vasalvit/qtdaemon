@@ -8,27 +8,25 @@ QT_BEGIN_NAMESPACE
 class QDaemonLogPrivate;
 class Q_DAEMON_EXPORT QDaemonLog
 {
-	Q_DISABLE_COPY(QDaemonLog)
+    Q_DISABLE_COPY(QDaemonLog)
 
 public:
-	enum EntrySeverity  {
-		NoticeEntry, WarningEntry, ErrorEntry
-	};
-	enum LogType { LogToStdout, LogToFile };
+    enum EntrySeverity  { NoticeEntry, WarningEntry, ErrorEntry };
+    enum LogType { LogToStdout, LogToFile };
 
-	QDaemonLog();
-	~QDaemonLog();
+    QDaemonLog(QDaemonLogPrivate &);
+    ~QDaemonLog();
 
-	void setLogType(LogType);
-	LogType logType() const;
+    void setLogType(LogType type);
+    LogType logType() const;
 
-	QDaemonLog & operator << (const QString &);
+    QDaemonLog & operator << (const QString & message);
 
-	friend Q_DAEMON_EXPORT QDaemonLog & qDaemonLog();
-	friend Q_DAEMON_EXPORT void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity);
+    friend Q_DAEMON_EXPORT QDaemonLog & qDaemonLog();
+    friend Q_DAEMON_EXPORT void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity);
 
 private:
-	QDaemonLogPrivate * d_ptr;
+    QDaemonLogPrivate * d_ptr;
 };
 
 // --- Friend declarations ---------------------------------------------------------------------------------------------- //
