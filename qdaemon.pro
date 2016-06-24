@@ -20,7 +20,11 @@ TEMPLATE = lib
 
 CONFIG += c++11
 
-DEFINES += QDAEMON_LIBRARY
+!CONFIG(staticlib) {
+  DEFINES += QDAEMON_LIBRARY
+} else {
+  DEFINES += QDAEMON_STATIC
+}
 
 MAKEFILE = qdaemon.make
 
