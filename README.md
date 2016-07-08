@@ -51,7 +51,7 @@ The application behaviour is controlled through command line switches. When no s
 
     Linux only:
 
-    Use the init.d script instead of directly invoking the applicaton
+    Use the init.d script instead of directly invoking the application
 
 * `--install`, `-i` Run the application as controlling terminal and attempt to install the daemon/service. Additional command line parameters for the daemon/service can be specified after `--`, which signifies the end of command line processing for the controlling application.
 
@@ -63,6 +63,11 @@ The application behaviour is controlled through command line switches. When no s
     Windows only:
 
     * `--update-path` whether the service should add its application directory to the windows PATH (it is appended if it doesn't exist)
+
+    OS X only:
+
+    * `--agent` makes the application an agent rather than a daemon
+    * `--user` makes an agent user local
 
 * `--uninstall`, `-u` Run the application as controlling terminal and attempt to uninstall the daemon/service.
 

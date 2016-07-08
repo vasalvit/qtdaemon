@@ -7,12 +7,14 @@
 #if defined(Q_OS_WIN)
 #include "daemonbackend_win.h"
 #include "controllerbackend_win.h"
-#else
+#elif defined(Q_OS_LINUX)
 #include "daemonbackend_linux.h"
 #include "controllerbackend_linux.h"
-#if !defined(Q_OS_LINUX)
+#elif defined(Q_OS_OSX)
+#include "daemonbackend_osx.h"
+#include "controllerbackend_osx.h"
+#else
 #warning This library is not supported on your platform.
-#endif
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -22,9 +24,12 @@ using namespace QtDaemon;
 #if defined(Q_OS_WIN)
 typedef DaemonBackendWindows DaemonBackend;
 typedef ControllerBackendWindows ControllerBackend;
-#else
+#elif defined(Q_OS_LINUX)
 typedef DaemonBackendLinux DaemonBackend;
 typedef ControllerBackendLinux ControllerBackend;
+#elif defined(Q_OS_OSX)
+typedef DaemonBackendOSX DaemonBackend;
+typedef ControllerBackendOSX ControllerBackend;
 #endif
 
 QString QDaemonApplicationPrivate::description;

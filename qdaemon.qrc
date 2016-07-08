@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>resources/init</file>
         <file>resources/dbus</file>
+        <file>resources/plist</file>
     </qresource>
 </RCC>

@@ -4,10 +4,6 @@
 #
 #-------------------------------------------------
 
-macx  {
-	error("This library is currently not supporting your platform.")
-}
-
 QT += core
 QT -= gui
 
@@ -43,7 +39,20 @@ HEADERS += qdaemon-global.h \
 	private/qdaemonlog_p.h \
 	private/qabstractdaemonbackend.h
 
-unix  {
+unix:RESOURCES += qdaemon.qrc
+
+macx {
+	SOURCES += \
+		private/controllerbackend_osx.cpp \
+		private/daemonbackend_osx.cpp
+	HEADERS += \
+		private/controllerbackend_osx.h \
+		private/daemonbackend_osx.h
+
+	!CONFIG(staticlib) {
+		QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
+	}
+} else: unix {
 	SOURCES += private/controllerbackend_linux.cpp \
 		private/daemonbackend_linux.cpp
 
@@ -58,10 +67,7 @@ unix  {
 		resources/init \
 		resources/dbus
 
-	RESOURCES += \
-		qdaemon.qrc
-}
-win32  {
+} else: win32 {
 	SOURCES += private/controllerbackend_win.cpp \
 		private/daemonbackend_win.cpp
 
