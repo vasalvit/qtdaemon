@@ -78,4 +78,7 @@ macx {
 #	DESTDIR = $$OUT_PWD	# For shadow building on Windows
 }
 
+load(qt_build_config)
 
+QMAKE_DOCS = $$PWD/doc/qdaemon.qdocconf
+QMAKE_DOCS_INDEX = ../../doc
