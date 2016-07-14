@@ -4,6 +4,7 @@ project                 = QDaemon
 description             = QDaemon Reference Documentation
 url                     = http://doc.qt.io/doc/qt-$QT_VER
 version                 = $QT_VERSION
+depends                 = qtcore
 
 exampledirs += snippets
 
@@ -15,6 +16,8 @@ manifestmeta.thumbnail.names += "QDaemon/*"
 headerdirs += ..
 sourcedirs += ..
 imagedirs += images
+
+defines += Q_DAEMON_EXPORT
 
 Cpp.ignoretokens += QDAEMON_EXPORT
 

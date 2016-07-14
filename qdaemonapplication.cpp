@@ -10,7 +10,7 @@ using namespace QtDaemon;
 /*!
     \page QtDaemon library overview
 
-    \section building Building the library
+    \section1 Building the library
 
     To build the library for dynamic linking invoke \c qmake on the project file.
     \code
@@ -30,9 +30,9 @@ using namespace QtDaemon;
     $ qmake qdaemon.pro CONFIG += staticlib
     \endcode
 
-    \subsection dependencies Dependencies
+    \section2 Dependencies
 
-    \bold{The library requires Qt 5.6 or later.}
+    \b{The library requires Qt 5.6 or later.}
 
     \table 100 %
         \header
@@ -56,17 +56,18 @@ using namespace QtDaemon;
     Headers and import library files (\c{advapi.lib, user32.lib}) should
     be provided through the appropriate Windows SDK.
 
-    \section installation Installation
+    \section1 Installation
 
-    \section troubleshoot Commonly encountered problems
+    \section1 Troubleshootin
 
-    \section license License
+    \section1 License
     The source code is distributed under the MIT license. See the LICENSE file
        for the full text.
 */
 
 /*!
     \class QDaemonApplication
+    \inmodule QDaemon
 
     \brief The \c QDaemonApplication class provides the basic infrastructure for
     developing system-level services (deamons on *nix).
@@ -253,6 +254,7 @@ QDaemonApplication * QDaemonApplication::instance()
 /*!
     Retrieves the value of the \c autoQuit property.
 
+    \return bool The value of the \c autoQuit property.
     \sa setAutoQuit()
 */
 bool QDaemonApplication::autoQuit() const
