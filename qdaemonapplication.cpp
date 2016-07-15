@@ -8,73 +8,14 @@ QT_BEGIN_NAMESPACE
 
 using namespace QtDaemon;
 /*!
-    \page QtDaemon library overview
-
-    \section1 Building the library
-
-    To build the library for dynamic linking invoke \c qmake on the project file.
-    \code
-    $ qmake qdaemon.pro
-    \endcode
-
-    And then use the appropriate \c make command to build the generated
-    \c qdaemon.make makefile.
-    For example on Linux:
-    \code
-    $ make -f qdaemon.make
-    \endcode
-
-    \note To build as a static library provide the \c staticlib configuration
-    to \c qmake.
-    \code
-    $ qmake qdaemon.pro CONFIG += staticlib
-    \endcode
-
-    \section2 Dependencies
-
-    \b{The library requires Qt 5.6 or later.}
-
-    \table 100 %
-        \header
-            \li Platform
-            \li Dependencies
-        \row
-            \li Linux
-            \li \c{QtCore, QtDBus}
-        \row
-            \li Windows
-            \li \c{QtCore, AdvApi, User32}
-        \row
-            \li OSX
-            \li \c{QtCore}
-    \endtable
-
-    \note On Linux the library requires a running \c dbus daemon to operate
-    correctly.
-
-    \note On Windows the library requires two native libraries to be linked.
-    Headers and import library files (\c{advapi.lib, user32.lib}) should
-    be provided through the appropriate Windows SDK.
-
-    \section1 Installation
-
-    \section1 Troubleshootin
-
-    \section1 License
-    The source code is distributed under the MIT license. See the LICENSE file
-       for the full text.
-*/
-
-/*!
     \class QDaemonApplication
     \inmodule QDaemon
 
-    \brief The \c QDaemonApplication class provides the basic infrastructure for
-    developing system-level services (deamons on *nix).
+    \brief The \l{QDaemonApplication} class provides an event loop for
+    system-level services (deamons).
 
-    The \c QDaemonApplication class processes the application command line and
-    provides both the daemon itself and the controlling application.
-
+    It processes the application command line and provides for
+    both the daemon itself and the controlling application.
     The application behavior is controlled through command line switches
     passed on startup. When no switches are provided the command line help text
     is displayed. The application object will emit the appropriate signal
@@ -83,42 +24,32 @@ using namespace QtDaemon;
     The following command line switches are processed by the daemon application
     object:
 
-    \table 100 %
+    \table
         \header
             \li Switch
             \li Description
         \row
-            \li \c {--start}
-            \li {1, 2} Run the application as controlling terminal and attempt
+            \li \c{--start}, \c{-s}
+            \li Run the application as controlling terminal and attempt
                 to start the daemon.
         \row
-            \li \c {-s}
-        \row
-            \li \c {--stop}
-            \li {1, 2} Run the application as controlling terminal and attempt
+            \li \c{--stop}, \c{-t}
+            \li Run the application as controlling terminal and attempt
                 to stop the daemon.
         \row
-            \li \c {-t}
-        \row
-            \li \c {--install}
-            \li {1, 2} Run the application as controlling terminal and attempt
+            \li \c{--install}, \c{-i}
+            \li Run the application as controlling terminal and attempt
                 to install the daemon/service. Additional command line parameters
                 for the daemon/service can be specified after \c --, which
                 signifies the end of command line processing for the controlling
                 application.
         \row
-            \li \c {-i}
-        \row
-            \li \c {--uninstall}
-            \li {1, 2} Run the application as controlling terminal and attempt
+            \li \c{--uninstall}, \c{-u}
+            \li Run the application as controlling terminal and attempt
                 to uninstall the daemon/service.
         \row
-            \li \c {-u}
-        \row
-            \li \c {--help}
-            \li {1, 2} Provide help text on the command line switches.
-        \row
-            \li \c {-h}
+            \li \c {--help}, \c{-h}
+            \li Provide help text on the command line switches.
         \row
             \li \c {--fake}
             \li Runs in pseudo-daemon mode. The application object will emit
@@ -137,7 +68,7 @@ using namespace QtDaemon;
 
     This signal is emitted when the process has been daemonized.
     The string list argument \a arguments is a proper command line that
-    can be used with a QCommandLineParser instance.
+    can be used with a \l{QCommandLineParser} instance.
 */
 /*!
     \fn QDaemonApplication::started()
@@ -247,15 +178,6 @@ QDaemonApplication * QDaemonApplication::instance()
 
     \note The property is enforced to \c false when the application is run with \c --fake.
     \note The property is enforced to \c true when the command line help is requested.
-
-    \sa setAutoQuit()
-*/
-
-/*!
-    Retrieves the value of the \c autoQuit property.
-
-    \return bool The value of the \c autoQuit property.
-    \sa setAutoQuit()
 */
 bool QDaemonApplication::autoQuit() const
 {
@@ -263,11 +185,6 @@ bool QDaemonApplication::autoQuit() const
     return d->autoQuit;
 }
 
-/*!
-    Sets the \c autoQuit property to \a enable.
-
-    \sa autoQuit()
-*/
 void QDaemonApplication::setAutoQuit(bool enable)
 {
     Q_D(QDaemonApplication);

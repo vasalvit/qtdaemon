@@ -27,5 +27,5 @@
 ****************************************************************************/
 
 //! [include]
-#include <QDaemonApplication>
+#include <QtDaemon>
 //! [include]

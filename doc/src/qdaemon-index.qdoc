@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2016 Samuel Gaist <samuel.gaist@edeltech.ch>
+** Copyright (C) 2016 Konstantin Shegunov <kshegunov@gmail.com>
 **
 ** This file is part of the documentation of the QDaemon library.
 **
@@ -25,35 +26,68 @@
 ** SOFTWARE.
 **
 ****************************************************************************/
-
 /*!
-    \page qdaemon-index.html
+    \page qdaemon-index.html overview
     \title Qt Daemon
-    \brief Provides a sample module index documentation.
 
-    Qt Daemon provide classes and functions that shows how to create a
-    Qt module.
+    \omit
+    \brief The Qt Daemon library faciliates the development of system-level
+    services (daemons).
+    \endomit
 
-    \section1 Getting Started
+    Qt Daemon provides the basic infrastructure to develop system-level services
+    (daemons).
 
-    To include the definitions of the module's classes and functions, use the
-    following include statement:
 
-    \snippet code/use-qdaemon.cpp include
+    \section1 Building the library
 
-    To link against the module, add this line to your qmake .pro file:
+    To build the library for dynamic linking invoke \c qmake on the project file.
+    \snippet code/building.bash qmake
 
-    \snippet code/use-qdaemon.pro link
+    And then use the appropriate \c make command to build the generated
+    \c{qdaemon.make} makefile.
 
-    \section1 Examples
+    For example on Linux:
+    \snippet code/building.bash make
 
+    To build as a static library provide the \c staticlib configuration
+    to \c qmake:
+    \snippet code/building.bash qmake_static
+
+    \section2 Dependencies
+
+    \note The library requires Qt 5.6 or later.
+
+    \table
+        \header
+            \li Platform
+            \li Dependencies
+        \row
+            \li Linux
+            \li \c{QtCore}, \c{QtDBus}
+                \note Requires a running \c{dbus} daemon to operate correctly.
+        \row
+            \li Windows
+            \li \c{QtCore}, \c{AdvApi}, \c{User32}
+                \note The native libraries' headers and import library files
+                (\c{advapi.lib}, \c{user32.lib}) should be provided through
+                the appropriate Windows SDK.
+        \row
+            \li OSX
+            \li \c{QtCore}
+    \endtable
+
+    \section1 Installation
+
+    \section1 Troubleshooting
+
+    \section1 License
+    The source code is distributed under the MIT license. See the LICENSE file
+       for the full text.
+
+    \section1 Reference
     \list
-    \li \l {Qt Daemon Examples}
-    \endlist
-
-    \section1 API Reference
-
-    \list
-    \li \l {Qt Daemon C++ Classes}{C++ Classes and Namespaces}
+        \li \l {Qt Daemon C++ Classes}{C++ Classes}
+        \li \l {Qt Daemon Examples}{Examples}
     \endlist
 */

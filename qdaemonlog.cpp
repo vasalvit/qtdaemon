@@ -9,7 +9,7 @@ QT_BEGIN_NAMESPACE
     \class QDaemonLog
     \inmodule QDaemon
 
-    \brief The QDaemonLog class provides for basic logging facilities for
+    \brief The \l{QDaemonLog} class provides basic logging facilities for
     daemon applications.
 
     It's set up to output on the standard stream when the application is run as controlling terminal,
@@ -150,8 +150,8 @@ void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity)
 
     QDaemonLogPrivate * const d = QDaemonLogPrivate::logger->d_ptr;
 
-    QMutexLocker lock(&d->streamMutex);     // The MS compiler doesn't get anonymous objects (error C2530: references must be initialized)
-    Q_UNUSED(lock);							// Suppress warning for unused variable
+    QMutexLocker lock(&d->streamMutex); // The MS compiler doesn't get anonymous objects (error C2530: references must be initialized)
+    Q_UNUSED(lock);                     // Suppress warning for unused variable
 
     d->write(message, severity);
 }

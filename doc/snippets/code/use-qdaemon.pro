@@ -1,3 +1,7 @@
+#! [module]
+QT += daemon
+#! [module]
+
 #! [link]
 LIBS += -L/qdaemon_instal_dir
 LIBS += -lqdaemon
