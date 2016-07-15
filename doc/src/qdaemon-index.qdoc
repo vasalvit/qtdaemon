@@ -68,9 +68,9 @@
                 \note Requires a running \c{dbus} daemon to operate correctly.
         \row
             \li Windows
-            \li \c{QtCore}, \c{AdvApi}, \c{User32}
+            \li \c{QtCore}, \c{Advapi32}, \c{User32}
                 \note The native libraries' headers and import library files
-                (\c{advapi.lib}, \c{user32.lib}) should be provided through
+                (\c{advapi32.lib}, \c{user32.lib}) should be provided through
                 the appropriate Windows SDK.
         \row
             \li OSX
