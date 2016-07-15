@@ -30,19 +30,13 @@
 /*!
     \module QDaemon
     \title Qt Daemon C++ Classes
-    \brief Provides classes and functions for the daemon module.
+    \brief List of C++ classes available in the module.
 
     \ingroup modules
     \ingroup technology-apis
     \qtvariable daemon
 
-    To include the definitions of the module's classes, use the following directive:
-
-    \snippet code/use-qdaemon.cpp include
-
-    If you use qmake to build your projects, add the following line to your .pro file:
-
-    \snippet code/use-qdaemon.pro module
+    \include qdaemon-usage.qdocinc
 
     \sa {Qt Daemon}
 */

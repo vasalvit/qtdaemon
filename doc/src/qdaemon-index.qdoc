@@ -36,27 +36,29 @@
     \endomit
 
     Qt Daemon provides the basic infrastructure to develop system-level services
-    (daemons).
+    (daemons). The library bundles both the required functionality to develop
+    daemons as well as means of controlling them.
 
+    \include qdaemon-usage.qdocinc
 
     \section1 Building the library
 
+    \note The library requires Qt 5.6 or later.
+
     To build the library for dynamic linking invoke \c qmake on the project file.
-    \snippet code/building.bash qmake
+    \snippet code/build.sh qmake
 
     And then use the appropriate \c make command to build the generated
     \c{qdaemon.make} makefile.
 
     For example on Linux:
-    \snippet code/building.bash make
+    \snippet code/build.sh make
 
     To build as a static library provide the \c staticlib configuration
     to \c qmake:
-    \snippet code/building.bash qmake_static
+    \snippet code/build.sh qmake_static
 
     \section2 Dependencies
-
-    \note The library requires Qt 5.6 or later.
 
     \table
         \header
@@ -77,9 +79,7 @@
             \li \c{QtCore}
     \endtable
 
-    \section1 Installation
 
-    \section1 Troubleshooting
 
     \section1 License
     The source code is distributed under the MIT license. See the LICENSE file
@@ -89,5 +89,6 @@
     \list
         \li \l {Qt Daemon C++ Classes}{C++ Classes}
         \li \l {Qt Daemon Examples}{Examples}
+        \li \l {Qt Daemon Installation}{Installation & troubleshooting}
     \endlist
 */

@@ -21,45 +21,7 @@ using namespace QtDaemon;
     is displayed. The application object will emit the appropriate signal
     associated with a switch when there are no errors processing the command line.
 
-    The following command line switches are processed by the daemon application
-    object:
-
-    \table
-        \header
-            \li Switch
-            \li Description
-        \row
-            \li \c{--start}, \c{-s}
-            \li Run the application as controlling terminal and attempt
-                to start the daemon.
-        \row
-            \li \c{--stop}, \c{-t}
-            \li Run the application as controlling terminal and attempt
-                to stop the daemon.
-        \row
-            \li \c{--install}, \c{-i}
-            \li Run the application as controlling terminal and attempt
-                to install the daemon/service. Additional command line parameters
-                for the daemon/service can be specified after \c --, which
-                signifies the end of command line processing for the controlling
-                application.
-        \row
-            \li \c{--uninstall}, \c{-u}
-            \li Run the application as controlling terminal and attempt
-                to uninstall the daemon/service.
-        \row
-            \li \c {--help}, \c{-h}
-            \li Provide help text on the command line switches.
-        \row
-            \li \c {--fake}
-            \li Runs in pseudo-daemon mode. The application object will emit
-                the daemonized() signal, but will not try to detach itself
-                from the terminal (Linux) and will not contact the service
-                control manager (Windows). It is provided as a means to debug
-                the daemon application. Additional command line parameters for
-                the daemon can be specified after \c --, which signifies the
-                end of command line processing for the controlling application.
-    \endtable
+    \include qdaemon-cl-switches.qdocinc
 
     \sa QCoreApplication
 */

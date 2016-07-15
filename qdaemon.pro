@@ -75,7 +75,6 @@ macx {
 		private/daemonbackend_win.h
 
 	LIBS += -luser32 -ladvapi32
-#	DESTDIR = $$OUT_PWD	# For shadow building on Windows
 }
 
 load(qt_build_config)
