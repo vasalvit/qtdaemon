@@ -64,32 +64,32 @@ using namespace QtDaemon;
     \sa QCoreApplication
 */
 /*!
-    \fn QDaemonApplication::daemonized(const QStringList & arguments)
+    \fn void QDaemonApplication::daemonized(const QStringList & arguments)
 
     This signal is emitted when the process has been daemonized.
     The string list argument \a arguments is a proper command line that
     can be used with a \l{QCommandLineParser} instance.
 */
 /*!
-    \fn QDaemonApplication::started()
+    \fn void QDaemonApplication::started()
 
     This signal is emitted when the application is run as a control terminal
     and the daemon process is started successfully.
 */
 /*!
-    \fn QDaemonApplication::stopped()
+    \fn void QDaemonApplication::stopped()
 
     This signal is emitted when the application is run as a control terminal
     and the daemon process is stopped successfully.
 */
 /*!
-    \fn QDaemonApplication::installed()
+    \fn void QDaemonApplication::installed()
 
     This signal is emitted when the application is run as a control terminal
     and the daemon application has been installed successfully.
 */
 /*!
-    \fn QDaemonApplication::uninstalled()
+    \fn void QDaemonApplication::uninstalled()
 
     This signal is emitted when the application is run as a control terminal
     and the daemon application has been uninstalled successfully.
