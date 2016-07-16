@@ -1,6 +1,0 @@
-#ifndef QDAEMONAPPLICATION_
-#define QDAEMONAPPLICATION_
-
-#include "qdaemonapplication.h"
-
-#endif // QDAEMONAPPLICATION_

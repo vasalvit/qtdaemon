@@ -1,7 +1,0 @@
-To include the definitions of the module's classes, use the following directive:
-
-\snippet code/use-qdaemon.cpp include
-
-If you use qmake to build your projects, add the following line to your .pro file:
-
-\snippet code/use-qdaemon.pro module

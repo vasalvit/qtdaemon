@@ -1,7 +1,0 @@
-#ifndef QTDAEMON_
-#define QTDAEMON_
-
-#include "qdaemonapplication.h"
-#include "qdaemonlog.h"
-
-#endif // QTDAEMON_

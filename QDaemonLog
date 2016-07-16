@@ -1,6 +1,0 @@
-#ifndef QDAEMONLOG_
-#define QDAEMONLOG_
-
-#include "qdaemonlog.h"
-
-#endif // QDAEMONLOG_
