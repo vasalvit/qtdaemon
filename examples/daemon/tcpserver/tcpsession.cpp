@@ -17,7 +17,7 @@ void TcpSession::open(qintptr descriptor)
     QObject::connect(socket, &QTcpSocket::readyRead, this, &TcpSession::readSocketData);
 
     if (!socket->setSocketDescriptor(descriptor))  {
-        deleteLater();  // Give up on the session
+        QMetaObject::invokeMethod(this, "closed", Qt::QueuedConnection);    // Give up on the session
         return;
     }
 }
