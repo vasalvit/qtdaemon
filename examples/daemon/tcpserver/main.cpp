@@ -35,8 +35,8 @@ int main(int argc, char ** argv)
     QDaemonApplication app(argc, argv);
 
     QDaemonApplication::setApplicationName("TcpServerDaemon example");
-    QDaemonApplication::setApplicationDescription("The TcpServerDaemon example shows the capabilities of QtDaemon module");
-    QDaemonApplication::setOrganizationDomain("qtdaemon.exmaples");
+    QDaemonApplication::setApplicationDescription("The TcpServerDaemon example shows the capabilities of the QtDaemon module");
+    QDaemonApplication::setOrganizationDomain("qtdaemon.examples");
 
     TcpServer tcpServer(&app);
 
