@@ -9,29 +9,29 @@ class QDBusAbstractInterface;
 
 namespace QtDaemon
 {
-	class Q_DAEMON_LOCAL ControllerBackendLinux : public QAbstractControllerBackend
-	{
-		Q_DISABLE_COPY(ControllerBackendLinux)
+    class Q_DAEMON_LOCAL ControllerBackendLinux : public QAbstractControllerBackend
+    {
+        Q_DISABLE_COPY(ControllerBackendLinux)
 
-	public:
-		ControllerBackendLinux(QCommandLineParser &, bool);
+    public:
+        ControllerBackendLinux(QCommandLineParser &, bool);
 
-		bool start() override;
-		bool stop() override;
-		bool install() override;
-		bool uninstall() override;
+        bool start() override;
+        bool stop() override;
+        bool install() override;
+        bool uninstall() override;
 
-	private:
-		QDBusAbstractInterface * getDBusInterface();
+    private:
+        QDBusAbstractInterface * getDBusInterface();
 
-		const QCommandLineOption dbusPrefixOption;
-		const QCommandLineOption initdPrefixOption;
+        const QCommandLineOption dbusPrefixOption;
+        const QCommandLineOption initdPrefixOption;
 
-		static const QString initdPrefix;
-		static const QString dbusPrefix;
-		static const QString defaultInitPath;
-		static const QString defaultDBusPath;
-	};
+        static const QString initdPrefix;
+        static const QString dbusPrefix;
+        static const QString defaultInitPath;
+        static const QString defaultDBusPath;
+    };
 }
 
 QT_END_NAMESPACE

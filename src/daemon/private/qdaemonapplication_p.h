@@ -22,32 +22,32 @@ QT_BEGIN_NAMESPACE
 
 namespace QtDaemon
 {
-	class QAbstractDaemonBackend;
+    class QAbstractDaemonBackend;
 }
 
 class QDaemonApplication;
 class Q_DAEMON_EXPORT QDaemonApplicationPrivate
 {
-	Q_DECLARE_PUBLIC(QDaemonApplication)
+    Q_DECLARE_PUBLIC(QDaemonApplication)
 public:
-	QDaemonApplicationPrivate(QDaemonApplication *);
-	~QDaemonApplicationPrivate();
+    QDaemonApplicationPrivate(QDaemonApplication *);
+    ~QDaemonApplicationPrivate();
 
 private:
-	int exec();
+    int exec();
 
-	static void processSignalHandler(int);
-
-private:
-	QtDaemon::QAbstractDaemonBackend * createBackend(bool);
+    static void processSignalHandler(int);
 
 private:
-	QDaemonApplication * q_ptr;
-	QDaemonLog log;
-	bool autoQuit;
-	QCommandLineParser parser;
+    QtDaemon::QAbstractDaemonBackend * createBackend(bool);
 
-	static QString description;
+private:
+    QDaemonApplication * q_ptr;
+    QDaemonLog log;
+    bool autoQuit;
+    QCommandLineParser parser;
+
+    static QString description;
 };
 
 QT_END_NAMESPACE

@@ -22,25 +22,25 @@ QT_BEGIN_NAMESPACE
 
 class QDaemonLogPrivate
 {
-	friend class QDaemonLog;
-	friend QDaemonLog & qDaemonLog();
-	friend void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity);
+    friend class QDaemonLog;
+    friend QDaemonLog & qDaemonLog();
+    friend void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity);
 
 public:
-	QDaemonLogPrivate();
-	~QDaemonLogPrivate();
+    QDaemonLogPrivate();
+    ~QDaemonLogPrivate();
 
-	void write(const QString &, QDaemonLog::EntrySeverity);
+    void write(const QString &, QDaemonLog::EntrySeverity);
 
 private:
-	QString logFilePath;
-	QFile logFile;
-	QTextStream logStream;
-	QDaemonLog::LogType logType;
+    QString logFilePath;
+    QFile logFile;
+    QTextStream logStream;
+    QDaemonLog::LogType logType;
 
-	QMutex streamMutex;
+    QMutex streamMutex;
 
-	static QDaemonLog * logger;
+    static QDaemonLog * logger;
 };
 
 QT_END_NAMESPACE

@@ -12,24 +12,24 @@
 HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|force-reload|help}"
 
 case "$1" in
-	start)
-	   %%DAEMON%% --start %%ARGUMENTS%%
-	   ;;
-	stop)
-	   %%DAEMON%% --stop
-	   ;;
-	force-reload) # Just fall through
-	   ;&
-	restart)
-	   %%DAEMON%% --stop
-	   %%DAEMON%% --start %%ARGUMENTS%%
-	   ;;
-	uninstall)
-	   %%DAEMON%% --uninstall --initd-prefix=%%INITD_PREFIX%% --dbus-prefix=%%DBUS_PREFIX%%
-	   ;;
-	help)
-	   echo $HELP_TEXT
-	   ;;
-	*)
-	   echo "Unrecognised option. "$HELP_TEXT
+    start)
+       %%DAEMON%% --start %%ARGUMENTS%%
+       ;;
+    stop)
+       %%DAEMON%% --stop
+       ;;
+    force-reload) # Just fall through
+       ;&
+    restart)
+       %%DAEMON%% --stop
+       %%DAEMON%% --start %%ARGUMENTS%%
+       ;;
+    uninstall)
+       %%DAEMON%% --uninstall --initd-prefix=%%INITD_PREFIX%% --dbus-prefix=%%DBUS_PREFIX%%
+       ;;
+    help)
+       echo $HELP_TEXT
+       ;;
+    *)
+       echo "Unrecognised option. "$HELP_TEXT
 esac

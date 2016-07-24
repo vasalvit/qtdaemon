@@ -11,23 +11,23 @@ QT_BEGIN_NAMESPACE
 
 namespace QtDaemon
 {
-	class Q_DAEMON_LOCAL DaemonBackendLinux : public QObject, public QAbstractDaemonBackend
-	{
-		Q_OBJECT
-		Q_DISABLE_COPY(DaemonBackendLinux)
-		Q_CLASSINFO("D-Bus Interface", Q_DAEMON_DBUS_CONTROL_INTERFACE)
+    class Q_DAEMON_LOCAL DaemonBackendLinux : public QObject, public QAbstractDaemonBackend
+    {
+        Q_OBJECT
+        Q_DISABLE_COPY(DaemonBackendLinux)
+        Q_CLASSINFO("D-Bus Interface", Q_DAEMON_DBUS_CONTROL_INTERFACE)
 
-	public:
-		DaemonBackendLinux(QCommandLineParser &);
-		~DaemonBackendLinux() override;
+    public:
+        DaemonBackendLinux(QCommandLineParser &);
+        ~DaemonBackendLinux() override;
 
-		int exec() override;
+        int exec() override;
 
-		Q_INVOKABLE bool isRunning();
-		Q_INVOKABLE bool stop();
+        Q_INVOKABLE bool isRunning();
+        Q_INVOKABLE bool stop();
 
-		static QString serviceName();
-	};
+        static QString serviceName();
+    };
 }
 
 QT_END_NAMESPACE
