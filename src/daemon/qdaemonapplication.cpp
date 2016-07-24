@@ -136,7 +136,7 @@ QDaemonApplication * QDaemonApplication::instance()
     or after it has been installed/uninstalled you can disable the controlling process' auto
     quit feature and subscribe to the appropriate signal.
 
-    By default this property is \c false.
+    By default this property is \c true.
 
     \note The property is enforced to \c false when the application is run with \c --fake.
     \note The property is enforced to \c true when the command line help is requested.

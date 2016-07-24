@@ -115,7 +115,7 @@ QDaemonLog::LogType QDaemonLog::logType() const
 }
 
 /*!
-    Writes a the message specified by \a message to the log.
+    Writes the message specified by \a message to the log.
 
     \sa qDaemonLog(const QString &, QDaemonLog::EntrySeverity)
 */
