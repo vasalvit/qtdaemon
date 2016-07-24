@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2016 Samuel Gaist <samuel.gaist@edeltech.ch>
 **
-** This file is part of the QDaemon library.
+** This file is part of the QtDaemon library.
 **
 ** The MIT License (MIT)
 **
@@ -25,6 +25,17 @@
 ** SOFTWARE.
 **
 ****************************************************************************/
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the QtDaemon API. It exists only
+// as an implementation detail. This header file may change from
+// version to version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #ifndef CONTROLLERBACKEND_OSX_H
 #define CONTROLLERBACKEND_OSX_H

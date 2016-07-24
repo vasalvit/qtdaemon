@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2016 Samuel Gaist <samuel.gaist@edeltech.ch>
 **
-** This file is part of the QDaemon library.
+** This file is part of the QtDaemon library.
 **
 ** The MIT License (MIT)
 **
