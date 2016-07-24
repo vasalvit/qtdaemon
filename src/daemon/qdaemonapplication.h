@@ -10,9 +10,12 @@ QT_BEGIN_NAMESPACE
 class QDaemonApplicationPrivate;
 class Q_DAEMON_EXPORT QDaemonApplication : public QCoreApplication
 {
-	Q_OBJECT
-	Q_DECLARE_PRIVATE(QDaemonApplication)
-	Q_DISABLE_COPY(QDaemonApplication)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QDaemonApplication)
+    Q_DISABLE_COPY(QDaemonApplication)
+
+    Q_PROPERTY(bool autoQuit READ autoQuit WRITE setAutoQuit)
+    Q_PROPERTY(QString applicationDescription READ applicationDescription WRITE setApplicationDescription)
 
 public:
 	QDaemonApplication(int & argc, char ** argv);

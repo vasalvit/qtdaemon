@@ -154,22 +154,17 @@ void QDaemonApplication::setAutoQuit(bool enable)
 }
 
 /*!
-    Retrieves the application's description string.
+    \property QDaemonApplication::applicationDescription
+    \brief Holds the daemon application's description.
 
-    \sa setApplicationDescription()
+    \note The description is not required, but if supplied it will be used to provide extra
+    information with the service control manager (windows) or the init.d script (linux).
 */
 QString QDaemonApplication::applicationDescription()
 {
     return QDaemonApplicationPrivate::description;
 }
 
-/*!
-    Sets the description of the daemon application to \a description.
-
-    \note The description is not required, but if provided it will be used with the service control manager (windows) or the init.d script (linux).
-
-    \sa applicationDescription()
-*/
 void QDaemonApplication::setApplicationDescription(const QString & description)
 {
     QDaemonApplicationPrivate::description = description;
