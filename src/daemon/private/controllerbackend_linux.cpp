@@ -55,7 +55,7 @@ bool ControllerBackendLinux::start()
     // First check if the daemon is already running
     QScopedPointer<QDBusAbstractInterface> interface(new QDBusInterface(service, QStringLiteral("/"), QStringLiteral(Q_DAEMON_DBUS_CONTROL_INTERFACE), dbus));
     if (interface->isValid())  {
-        QDBusReply<bool> reply = interface->call("isRunning");
+        QDBusReply<bool> reply = interface->call(QStringLiteral("isRunning"));
         if (reply.isValid() && reply.value())
             qDaemonLog(QStringLiteral("The daemon is already running."), QDaemonLog::NoticeEntry);
         else
@@ -94,7 +94,7 @@ bool ControllerBackendLinux::start()
         return false;
     }
 
-    QDBusReply<bool> reply = interface->call("isRunning");
+    QDBusReply<bool> reply = interface->call(QStringLiteral("isRunning"));
     if (!reply.isValid() || !reply.value())  {
         qDaemonLog(QStringLiteral("The acquired DBus interface replied erroneously. (%1)").arg(dbus.lastError().message()), QDaemonLog::ErrorEntry);
         return false;
@@ -123,7 +123,7 @@ bool ControllerBackendLinux::stop()
         return false;
     }
 
-    QDBusReply<bool> reply = interface->call("stop");
+    QDBusReply<bool> reply = interface->call(QStringLiteral("stop"));
     if (!reply.isValid() || !reply.value())  {
         qDaemonLog(QStringLiteral("The acquired DBus interface replied erroneously. (%1)").arg(dbus.lastError().message()), QDaemonLog::ErrorEntry);
         return false;
@@ -176,7 +176,7 @@ bool ControllerBackendLinux::install()
     }
 
     // We have opened both files, read the templates
-    QFile dbusTemplate(":/resources/dbus"), initdTemplate(":/resources/init");
+    QFile dbusTemplate(QStringLiteral(":/resources/dbus")), initdTemplate(QStringLiteral(":/resources/init"));
 
     // We don't expect resources to be inaccessible, but who knows ...
     if (!dbusTemplate.open(QFile::ReadOnly | QFile::Text) || !initdTemplate.open(QFile::ReadOnly | QFile::Text))  {

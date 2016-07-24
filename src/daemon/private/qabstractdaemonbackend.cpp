@@ -21,10 +21,10 @@ QAbstractDaemonBackend::~QAbstractDaemonBackend()
 
 QAbstractControllerBackend::QAbstractControllerBackend(QCommandLineParser & parser, bool aq)
     : QAbstractDaemonBackend(parser), autoQuit(aq),
-      installOption(QStringList() << "i" << "install", QCoreApplication::translate("main", "Install the daemon")),
-      uninstallOption(QStringList() << "u" << "uninstall", QCoreApplication::translate("main", "Uninstall the daemon")),
-      startOption(QStringList() << "s" << "start", QCoreApplication::translate("main", "Start the daemon")),
-      stopOption(QStringList() << "t" << "stop", QCoreApplication::translate("main", "Stop the daemon")),
+      installOption(QStringList() << QStringLiteral("i") << QStringLiteral("install"), QCoreApplication::translate("main", "Install the daemon")),
+      uninstallOption(QStringList() << QStringLiteral("u") << QStringLiteral("uninstall"), QCoreApplication::translate("main", "Uninstall the daemon")),
+      startOption(QStringList() << QStringLiteral("s") << QStringLiteral("start"), QCoreApplication::translate("main", "Start the daemon")),
+      stopOption(QStringList() << QStringLiteral("t") << QStringLiteral("stop"), QCoreApplication::translate("main", "Stop the daemon")),
       fakeOption(QStringLiteral("fake"), QCoreApplication::translate("main", "Run the daemon in fake mode (for debugging)."))
 {
     parser.addOption(installOption);
