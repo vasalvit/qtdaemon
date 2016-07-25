@@ -46,28 +46,28 @@ class Q_DAEMON_EXPORT QDaemonApplication : public QCoreApplication
     Q_PROPERTY(QString applicationDescription READ applicationDescription WRITE setApplicationDescription)
 
 public:
-	QDaemonApplication(int & argc, char ** argv);
-	~QDaemonApplication() override;
+    QDaemonApplication(int & argc, char ** argv);
+    ~QDaemonApplication() override;
 
-	static int exec();
-	static QDaemonApplication * instance();
+    static int exec();
+    static QDaemonApplication * instance();
 
-	bool autoQuit() const;
-	void setAutoQuit(bool);
+    bool autoQuit() const;
+    void setAutoQuit(bool);
 
-	static QString applicationDescription();
-	static void setApplicationDescription(const QString &);
+    static QString applicationDescription();
+    static void setApplicationDescription(const QString &);
 
 Q_SIGNALS:
     void daemonized(const QStringList &);
 
-	void started();
-	void stopped();
-	void installed();
-	void uninstalled();
+    void started();
+    void stopped();
+    void installed();
+    void uninstalled();
 
 private:
-	QDaemonApplicationPrivate * d_ptr;
+    QDaemonApplicationPrivate * d_ptr;
 };
 
 QT_END_NAMESPACE
