@@ -2,9 +2,9 @@
     error("Couldn't find the examples.pri file!")
 }
 
-QT += network
-
 TARGET = tcpserver
+
+QT += network
 
 SOURCES += main.cpp \
     tcpsession.cpp \

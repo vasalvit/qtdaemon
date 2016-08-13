@@ -11,13 +11,13 @@ headerdirs += .. \
 
 imagedirs += images
 
-exampledirs += snippets
+exampledirs += ../../../examples/daemon snippets
 
 examplesinstallpath = daemon
 
 sources.fileextensions  = "*.cpp *.qdoc"
 
-depends = qtcore qtdoc
+depends = qtcore qtdoc qmake
 
 Cpp.ignoretokens += Q_DAEMON_EXPORT
 

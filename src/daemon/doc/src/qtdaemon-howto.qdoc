@@ -1,8 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Samuel Gaist <samuel.gaist@edeltech.ch>
+** Copyright (C) 2016 Konstantin Shegunov <kshegunov@gmail.com>
 **
-** This file is part of the documentation of the QDaemon library.
+** This file is part of the documentation of the QtDaemon library.
 **
 ** The MIT License (MIT)
 **
@@ -27,11 +27,9 @@
 ****************************************************************************/
 
 /*!
-    \group qtdaemon-examples
-    \title Qt Daemon Examples
-    \brief Examples for the Qt Daemon module.
-    \ingroup all-examples
+    \page qtdaemon-usage.html howto
+    \title Qt Daemon Usage
+    \brief Using the module.
 
-    Here is a list of example applications demonstrating the functionality
-    provided by the \l{Qt Daemon} module.
+    Here are snippets showing how to use the module
 */

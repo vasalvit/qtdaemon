@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Samuel Gaist <samuel.gaist@edeltech.ch>
+** Copyright (C) 2016 Konstantin Shegunov <kshegunov@gmail.com>
 **
 ** This file is part of the documentation of the QDaemon library.
 **
@@ -27,11 +27,13 @@
 ****************************************************************************/
 
 /*!
-    \group qtdaemon-examples
-    \title Qt Daemon Examples
-    \brief Examples for the Qt Daemon module.
-    \ingroup all-examples
+    \example tcpserver
+    \title Threaded TCP server example
+    \ingroup qtdaemon-examples
 
-    Here is a list of example applications demonstrating the functionality
-    provided by the \l{Qt Daemon} module.
+    The Threaded TCP sever example demonstrates a basic TCP server daemon
+    that responds to simple commands and writes the received data to
+    the daemon log.
+    
+    \sa {Qt Daemon Examples}
 */

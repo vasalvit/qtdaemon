@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QDaemonLog
-    \inmodule QDaemon
+    \inmodule QtDaemon
 
     \brief The \l{QDaemonLog} class provides basic logging facilities for
     daemon applications.

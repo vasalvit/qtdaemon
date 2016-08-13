@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 using namespace QtDaemon;
 /*!
     \class QDaemonApplication
-    \inmodule QDaemon
+    \inmodule QtDaemon
 
     \brief The \l{QDaemonApplication} class provides an event loop for
     system-level services (deamons).

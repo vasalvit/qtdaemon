@@ -38,21 +38,14 @@
     Qt Daemon provides the basic infrastructure to develop system-level services
     (daemons). The library bundles both the required functionality to develop
     daemons as well as means of controlling them.
+    
+    \note The library requires Qt 5.6 or later.
 
     \include qtdaemon-usage.qdocinc
 
     \section1 Building the library
-
-    \note The library requires Qt 5.6 or later.
-
-    To build the library for dynamic linking invoke \c qmake on the project file.
-    \snippet code/build.sh qmake
-
-    And then use the appropriate \c make command to build the generated
-    \c{qtdaemon.make} makefile.
-
-    For example on Linux:
-    \snippet code/build.sh make
+    
+    \include qtdaemon-building.qdocinc
 
     \section2 Dependencies
 
@@ -84,7 +77,7 @@
     \section1 Reference
     \list
         \li \l {Qt Daemon C++ Classes}{C++ Classes}
+        \li \l {Qt Daemon Usage}{Usage}
         \li \l {Qt Daemon Examples}{Examples}
-        \li \l {Qt Daemon Installation}{Installation & troubleshooting}
     \endlist
 */
