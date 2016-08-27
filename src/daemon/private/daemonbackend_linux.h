@@ -58,9 +58,9 @@ namespace QtDaemon
 
     public:
         DaemonBackendLinux(QCommandLineParser &);
-        ~DaemonBackendLinux() override;
+        ~DaemonBackendLinux() Q_DECL_OVERRIDE;
 
-        int exec() override;
+        int exec() Q_DECL_OVERRIDE;
 
         Q_INVOKABLE bool isRunning();
         Q_INVOKABLE bool stop();

@@ -55,10 +55,10 @@ namespace QtDaemon
     public:
         ControllerBackendLinux(QCommandLineParser &, bool);
 
-        bool start() override;
-        bool stop() override;
-        bool install() override;
-        bool uninstall() override;
+        bool start() Q_DECL_OVERRIDE;
+        bool stop() Q_DECL_OVERRIDE;
+        bool install() Q_DECL_OVERRIDE;
+        bool uninstall() Q_DECL_OVERRIDE;
 
     private:
         QDBusAbstractInterface * getDBusInterface();

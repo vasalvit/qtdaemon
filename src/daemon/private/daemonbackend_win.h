@@ -52,9 +52,9 @@ namespace QtDaemon
 
     public:
         DaemonBackendWindows(QCommandLineParser &);
-        ~DaemonBackendWindows() override;
+        ~DaemonBackendWindows() Q_DECL_OVERRIDE;
 
-        int exec() override;
+        int exec() Q_DECL_OVERRIDE;
     };
 }
 

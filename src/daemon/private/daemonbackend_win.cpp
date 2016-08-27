@@ -65,7 +65,7 @@ public:
         ::memset(dispatchTable, 0, 2 * sizeof(SERVICE_TABLE_ENTRY));
     }
 
-    void run() override
+    void run() Q_DECL_OVERRIDE
     {
         dispatchTable[0].lpServiceName = reinterpret_cast<LPTSTR>(const_cast<ushort *>(serviceName.utf16()));	// Type safety be damned ...!
         dispatchTable[0].lpServiceProc = ServiceMain;

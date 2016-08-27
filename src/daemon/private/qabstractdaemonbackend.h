@@ -75,7 +75,7 @@ namespace QtDaemon
     public:
         QAbstractControllerBackend(QCommandLineParser &, bool);
 
-        int exec() override;
+        int exec() Q_DECL_OVERRIDE;
 
         virtual bool start() = 0;
         virtual bool stop() = 0;
