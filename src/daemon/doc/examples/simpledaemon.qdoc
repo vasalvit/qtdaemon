@@ -1,6 +1,5 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 Samuel Gaist <samuel.gaist@edeltech.ch>
 ** Copyright (C) 2016 Konstantin Shegunov <kshegunov@gmail.com>
 **
 ** This file is part of the documentation of the QDaemon library.
@@ -27,6 +26,16 @@
 **
 ****************************************************************************/
 
-//! [include]
-#include <QtDaemon>
-//! [include]
+/*!
+    \example simpledaemon
+    \title Simple daemon example
+    \ingroup qtdaemon-examples
+
+    \brief A daemon that logs the passed command line arguments and control requests.
+    
+    The Simple Daemon example demonstrates the most essential elements needed for developing a daemon with the library.
+    
+    \include simpledaemon-cpp.qdocinc
+    
+    \sa {Qt Daemon Examples}
+*/

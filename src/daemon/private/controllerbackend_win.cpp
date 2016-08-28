@@ -84,7 +84,7 @@ public:
         if (handle && !CloseServiceHandle(handle))
             qDaemonLog(QStringLiteral("Error while closing the service manager (Error code %1).").arg(GetLastError()), QDaemonLog::WarningEntry);
 
-        handle = nullptr;
+        handle = Q_NULLPTR;
     }
 
 private:
@@ -95,12 +95,12 @@ class WindowsService
 {
 public:
     WindowsService(const QString & name, WindowsServiceManager & sm)
-        : manager(sm), handle(nullptr), serviceName(name)
+        : manager(sm), handle(Q_NULLPTR), serviceName(name)
     {
     }
 
     WindowsService(WindowsServiceManager & sm)
-        : manager(sm), handle(nullptr)
+        : manager(sm), handle(Q_NULLPTR)
     {
     }
 
@@ -173,7 +173,7 @@ public:
         if (handle && !CloseServiceHandle(handle))
             qDaemonLog(QStringLiteral("Error while closing the service handle (Error code %1).").arg(GetLastError()), QDaemonLog::WarningEntry);
 
-        handle = nullptr;
+        handle = Q_NULLPTR;
     }
 
     bool create()
@@ -350,7 +350,7 @@ public:
         // Retrieve the system path (RegOpenKeyTransacted breaks compatibility with Windows XP)
         if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, pathRegistryKey, 0, KEY_QUERY_VALUE | KEY_SET_VALUE, &registryKey) != ERROR_SUCCESS)  {
             qDaemonLog(QStringLiteral("Couldn't open the PATH registry key. You may need to update the system path manually."), QDaemonLog::WarningEntry);
-            registryKey = nullptr;
+            registryKey = Q_NULLPTR;
         }
     }
 

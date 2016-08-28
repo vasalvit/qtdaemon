@@ -31,9 +31,9 @@
     \title Threaded TCP server example
     \ingroup qtdaemon-examples
 
-    The Threaded TCP sever example demonstrates a basic TCP server daemon
-    that responds to simple commands and writes the received data to
-    the daemon log.
+    \brief A basic TCP server daemon that responds to simple commands and writes the received data to the daemon log.
+    
+    The Threaded TCP sever example demonstrates a basic TCP server daemon that responds to simple commands and writes the received data to the daemon log.
     
     \sa {Qt Daemon Examples}
 */

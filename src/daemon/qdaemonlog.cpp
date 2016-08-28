@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \value WarningEntry The entry is a warning. Usually used when non-critical errors occur.
     \value ErrorEntry   The entry is an error. Usually used with critical errors.
 
-    \sa qDaemonLog(const QString &, QDaemonLog::EntrySeverity severity)
+    \sa qDaemonLog(const QString &, QDaemonLog::EntrySeverity)
 */
 
 /*!
@@ -84,7 +84,7 @@ QDaemonLog::QDaemonLog(QDaemonLogPrivate & d)
 */
 QDaemonLog::~QDaemonLog()
 {
-    QDaemonLogPrivate::logger = nullptr;
+    QDaemonLogPrivate::logger = Q_NULLPTR;
     delete d_ptr;
 }
 
@@ -145,7 +145,7 @@ QDaemonLog::LogType QDaemonLog::logType() const
 /*!
     Writes the message specified by \a message to the log.
 
-    \sa qDaemonLog(const QString &, QDaemonLog::EntrySeverity)
+    \sa qDaemonLog()
 */
 QDaemonLog & QDaemonLog::operator << (const QString & message)
 {
@@ -157,13 +157,13 @@ QDaemonLog & QDaemonLog::operator << (const QString & message)
 }
 
 /*!
-    \fn QDaemonLog & qDaemonLog()
+    \relates QDaemonLog
 
     Retrieves the logger instance.
 
     \warning The daemon log can be retrieved only after the QDaemonApplication instance has been created.
 
-    \sa qDaemonLog(), operator << (const QString &)
+    \sa qDaemonLog(const QString &, QDaemonLog::EntrySeverity), QDaemonLog::operator<<()
 */
 QDaemonLog & qDaemonLog()
 {
@@ -172,13 +172,12 @@ QDaemonLog & qDaemonLog()
 }
 
 /*!
-    \fn void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity)
-
+    \relates QDaemonLog
     \overload qDaemonLog()
 
     Writes a message specified by \a message to the log with a severity given by \a severity.
 
-    \sa qDaemonLog(), operator << (const QString &)
+    \sa qDaemonLog(), QDaemonLog::operator<<()
 */
 void qDaemonLog(const QString & message, QDaemonLog::EntrySeverity severity)
 {

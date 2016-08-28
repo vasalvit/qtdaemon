@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2016 Konstantin Shegunov <kshegunov@gmail.com>
 **
-** This file is part of the QtDaemon library.
+** This file is part of the documentation of the QtDaemon library.
 **
 ** The MIT License (MIT)
 **

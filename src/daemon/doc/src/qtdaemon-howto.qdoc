@@ -25,11 +25,18 @@
 ** SOFTWARE.
 **
 ****************************************************************************/
-
 /*!
     \page qtdaemon-usage.html howto
     \title Qt Daemon Usage
     \brief Using the module.
 
-    Here are snippets showing how to use the module
+    \section1 Creating a daemon application
+    
+    \include examples/simpledaemon-cpp.qdocinc
+    
+    \section1 Installing and using the daemon
+    
+    ToDo: Finish
+    
+    \sa {Qt Daemon Examples}
 */
