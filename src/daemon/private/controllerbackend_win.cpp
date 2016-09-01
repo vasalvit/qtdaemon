@@ -306,24 +306,42 @@ public:
         return waitForStatus(SERVICE_STOPPED);
     }
 
+    DWORD status()
+    {
+        if (!handle)  {
+            qWarning("Service must be opened before calling status().");
+            return 0;
+        }
+
+        DWORD bytesNeeded;
+        SERVICE_STATUS_PROCESS serviceStatus;
+        if (!QueryServiceStatusEx(handle, SC_STATUS_PROCESS_INFO, reinterpret_cast<LPBYTE>(&serviceStatus), sizeof(SERVICE_STATUS_PROCESS), &bytesNeeded))  {
+            DWORD error = GetLastError();
+            switch (error)
+            {
+            case ERROR_ACCESS_DENIED:
+                qDaemonLog(QStringLiteral("Couldn't get the service's status, access denied."), QDaemonLog::ErrorEntry);
+                break;
+            default:
+                qDaemonLog(QStringLiteral("Couldn't get the service's status (Error code %1).").arg(error), QDaemonLog::ErrorEntry);
+            }
+
+            return 0;
+        }
+
+        return serviceStatus.dwCurrentState;
+    }
+
 private:
-    bool waitForStatus(int requestedStatus)
+    bool waitForStatus(DWORD requestedStatus)
     {
         const unsigned long pollInterval = serviceNotifyTimeout / 20;		// A twentieth of the allowed timeout interval (in ms)
 
         // Do polling (Windows XP compatible)
-        SERVICE_STATUS_PROCESS status;
-        DWORD bytesNeeded;
-
         QElapsedTimer timeout;
         timeout.start();
         while (!timeout.hasExpired(serviceNotifyTimeout))  {
-            if (!QueryServiceStatusEx(handle, SC_STATUS_PROCESS_INFO, reinterpret_cast<LPBYTE>(&status), sizeof(status), &bytesNeeded))  {
-                qDaemonLog(QStringLiteral("Couldn't obtain the service status (Error code %1).").arg(GetLastError()), QDaemonLog::ErrorEntry);
-                return false;
-            }
-
-            if (status.dwCurrentState == requestedStatus)
+            if (status() == requestedStatus)
                 return true;
 
             // Wait a bit before trying out
@@ -411,7 +429,7 @@ private:
         }
 
         // Continuing to chop any type safety away
-        QString path(reinterpret_cast<const QChar * const>(buffer), bufferSize / sizeof(TCHAR));
+        QString path(reinterpret_cast<const QChar * const>(buffer), (bufferSize - 1) / sizeof(TCHAR) );
 
         // Normalize the paths
         entries = path.split(';', QString::SkipEmptyParts);
@@ -546,8 +564,22 @@ bool ControllerBackendWindows::uninstall()
 
 QAbstractControllerBackend::DaemonStatus ControllerBackendWindows::status()
 {
-    Q_ASSERT(false);
-    return NotRunningStatus;
+    WindowsServiceManager manager = WindowsServiceManager::open();
+    if (!manager.isValid())
+        return NotRunningStatus;
+
+    WindowsService service(QDaemonApplication::applicationName(), manager);
+    if (!service.open(SERVICE_QUERY_STATUS))
+        return NotRunningStatus;
+
+    switch (service.status())
+    {
+    case SERVICE_RUNNING:
+        return RunningStatus;
+    case SERVICE_STOPPED:
+    default:
+        return NotRunningStatus;
+    }
 }
 
 QT_END_NAMESPACE
