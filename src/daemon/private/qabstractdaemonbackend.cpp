@@ -53,27 +53,32 @@ QAbstractControllerBackend::QAbstractControllerBackend(QCommandLineParser & pars
       uninstallOption(QStringList() << QStringLiteral("u") << QStringLiteral("uninstall"), QCoreApplication::translate("main", "Uninstall the daemon")),
       startOption(QStringList() << QStringLiteral("s") << QStringLiteral("start"), QCoreApplication::translate("main", "Start the daemon")),
       stopOption(QStringList() << QStringLiteral("t") << QStringLiteral("stop"), QCoreApplication::translate("main", "Stop the daemon")),
+      statusOption(QStringList() << QStringLiteral("status"), QCoreApplication::translate("main", "Check the daemon status")),
       fakeOption(QStringLiteral("fake"), QCoreApplication::translate("main", "Run the daemon in fake mode (for debugging)."))
 {
     parser.addOption(installOption);
     parser.addOption(uninstallOption);
     parser.addOption(startOption);
     parser.addOption(stopOption);
+    parser.addOption(statusOption);
     parser.addOption(fakeOption);
     parser.addHelpOption();
 }
 
 int QAbstractControllerBackend::exec()
 {
-    bool status = true;
+    bool result = true;
     if (parser.isSet(startOption))
-        status = start();
+        result = start();
     else if (parser.isSet(stopOption))
-        status = stop();
+        result = stop();
     else if (parser.isSet(installOption))
-        status = install();
+        result = install();
     else if (parser.isSet(uninstallOption))
-        status = uninstall();
+        result = uninstall();
+    else if (parser.isSet(statusOption))  {
+        qDaemonLog() << (status() == RunningStatus ? QCoreApplication::translate("main", "Daemon is running.") : QCoreApplication::translate("main", "Daemon is not running or it's not responding."));
+    }
     else if (parser.isSet(fakeOption))  {
         autoQuit = false;	// Enforce not quitting
 
@@ -87,7 +92,7 @@ int QAbstractControllerBackend::exec()
         return 0;
     }
 
-    if (!status)
+    if (!result)
         return BackendFailed;
 
     if (autoQuit)

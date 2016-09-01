@@ -194,4 +194,10 @@ QString ControllerBackendOSX::configurationFilePath() const
     return configurationPath() + QStringLiteral("/") + daemonTargetFileName();
 }
 
+QAbstractControllerBackend::DaemonStatus ControllerBackendOSX::status()
+{
+    Q_ASSERT(false);
+    return NotRunningStatus;
+}
+
 QT_END_NAMESPACE

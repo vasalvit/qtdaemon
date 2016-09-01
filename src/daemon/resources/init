@@ -9,7 +9,7 @@
 # Description:       %%DESCRIPTION%%
 ### END INIT INFO
 
-HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|force-reload|help}"
+HELP_TEXT="Usage: $0 {start|stop|restart|uninstall|force-reload|status|help}"
 
 case "$1" in
     start)
@@ -26,6 +26,9 @@ case "$1" in
        ;;
     uninstall)
        %%DAEMON%% --uninstall --initd-prefix=%%INITD_PREFIX%% --dbus-prefix=%%DBUS_PREFIX%%
+       ;;
+    status)
+       %%DAEMON%% --status
        ;;
     help)
        echo $HELP_TEXT

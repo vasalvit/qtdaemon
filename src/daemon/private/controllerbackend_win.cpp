@@ -544,4 +544,10 @@ bool ControllerBackendWindows::uninstall()
     return true;
 }
 
+QAbstractControllerBackend::DaemonStatus ControllerBackendWindows::status()
+{
+    Q_ASSERT(false);
+    return NotRunningStatus;
+}
+
 QT_END_NAMESPACE
