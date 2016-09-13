@@ -64,7 +64,7 @@ The application behaviour is controlled through command line switches. When no s
 
     * `--update-path` whether the service should add its application directory to the windows PATH (it is appended if it doesn't exist)
 
-    OS X only:
+    macOS only:
 
     * `--agent` makes the application an agent rather than a daemon
     * `--user` makes an agent user local
