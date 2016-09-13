@@ -37,6 +37,7 @@
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qprocess.h>
+#include <QtCore/qregularexpression.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -62,7 +63,7 @@ bool ControllerBackendOSX::start()
     const QString daemonConfigurationFilePath = settings.value(kPlistFilePathKey, QString()).toString();
 
     QProcess launchctl;
-    launchctl.start(QStringLiteral("launchctl"), QStringList() << "load" << daemonConfigurationFilePath);
+    launchctl.start(QStringLiteral("launchctl"), QStringList() << QStringLiteral("load") << daemonConfigurationFilePath);
     bool success = launchctl.waitForStarted();
 
     if (!success) {
@@ -72,11 +73,10 @@ bool ControllerBackendOSX::start()
 
     success = launchctl.waitForFinished();
 
-    if (success) {
+    if (success)
         QMetaObject::invokeMethod(qApp, "started", Qt::QueuedConnection);
-    } else {
+    else
         qDaemonLog(QStringLiteral("Couldn't start the daemon %1").arg(QString::fromUtf8(launchctl.readAllStandardError())), QDaemonLog::ErrorEntry);
-    }
 
     return success;
 }
@@ -87,7 +87,7 @@ bool ControllerBackendOSX::stop()
     const QString daemonConfigurationFilePath = settings.value(kPlistFilePathKey, QString()).toString();
 
     QProcess launchctl;
-    launchctl.start(QStringLiteral("launchctl"), QStringList() << "unload" << daemonConfigurationFilePath);
+    launchctl.start(QStringLiteral("launchctl"), QStringList() << QStringLiteral("unload") << daemonConfigurationFilePath);
     bool success = launchctl.waitForStarted();
 
     if (!success) {
@@ -97,25 +97,22 @@ bool ControllerBackendOSX::stop()
 
     success = launchctl.waitForFinished();
 
-    if (success) {
+    if (success)
         QMetaObject::invokeMethod(qApp, "stopped", Qt::QueuedConnection);
-    } else {
+    else
         qDaemonLog(QStringLiteral("Couldn't stop the daemon %1").arg(QString::fromUtf8(launchctl.readAllStandardError())), QDaemonLog::ErrorEntry);
-    }
 
     return success;
 }
 
 bool ControllerBackendOSX::install()
 {
-    QFile plistTemplate(":/resources/plist");
+    QFile plistTemplate(QStringLiteral(":/resources/plist"));
     if (!plistTemplate.open(QFile::ReadOnly | QFile::Text))  {
         qDaemonLog(QStringLiteral("Couldn't read the daemon's resources!"), QDaemonLog::ErrorEntry);
         return false;
     }
 
-    QString daemonFileName = daemonTargetFileName();
-    QString daemonName = daemonFileName.left(daemonFileName.lastIndexOf("."));
     QString daemonConfigurationFilePath = configurationFilePath();
 
     QFile plistOutFile(daemonConfigurationFilePath);
@@ -129,15 +126,14 @@ bool ControllerBackendOSX::install()
 
     if (arguments.size() > 0) {
         plistArguments << QStringLiteral("<string>--</string>");
-        for (const QString& argument: arguments) {
+        for (const QString& argument: arguments)
             plistArguments << QStringLiteral("        <string>") + argument + QStringLiteral("</string>");
-        }
     }
 
     QString plistTemplateText = QString::fromUtf8(plistTemplate.readAll());
-    plistTemplateText = plistTemplateText.replace(QStringLiteral("%%APPLICATION_IDENTIFIER%%"), daemonName)
+    plistTemplateText = plistTemplateText.replace(QStringLiteral("%%APPLICATION_IDENTIFIER%%"), daemonName())
                                          .replace(QStringLiteral("%%APPLICATION_PATH%%"), qApp->applicationFilePath())
-                                         .replace(QStringLiteral("%%ARGUMENTS%%"), plistArguments.join("\n"));
+                                         .replace(QStringLiteral("%%ARGUMENTS%%"), plistArguments.join('\n'));
 
     plistOutFile.write(plistTemplateText.toUtf8());
 
@@ -173,11 +169,10 @@ QString ControllerBackendOSX::configurationPath() const
 {
     QString daemonConfigurationFilePath = kDaemonsPath;
     if (parser.isSet(agentOption)) {
-        if (parser.isSet(userOption)) {
+        if (parser.isSet(userOption))
             daemonConfigurationFilePath = kUserAgentsPath.arg(QDir::homePath());
-        } else {
+        else
             daemonConfigurationFilePath = kSystemAgentsPath;
-        }
     }
     return daemonConfigurationFilePath;
 }
@@ -189,6 +184,12 @@ QString ControllerBackendOSX::daemonTargetFileName() const
     return settingsFileInfo.fileName();
 }
 
+QString ControllerBackendOSX::daemonName() const
+{
+    QString daemonFileName = daemonTargetFileName();
+    return daemonFileName.left(daemonFileName.lastIndexOf('.'));
+}
+
 QString ControllerBackendOSX::configurationFilePath() const
 {
     return configurationPath() + QStringLiteral("/") + daemonTargetFileName();
@@ -196,8 +197,34 @@ QString ControllerBackendOSX::configurationFilePath() const
 
 QAbstractControllerBackend::DaemonStatus ControllerBackendOSX::status()
 {
-    Q_ASSERT(false);
-    return NotRunningStatus;
+    QAbstractControllerBackend::DaemonStatus status = NotRunningStatus;
+    QProcess launchctl;
+    launchctl.start(QStringLiteral("launchctl"), QStringList() << QStringLiteral("list"));
+
+    bool success = launchctl.waitForStarted();
+
+    if (!success) {
+        qDaemonLog(QStringLiteral("Couldn't run launchctl %1").arg(QString::fromUtf8(launchctl.readAllStandardError())), QDaemonLog::ErrorEntry);
+        return status;
+    }
+
+    success = launchctl.waitForFinished();
+
+    if (success) {
+        QRegularExpression re(QStringLiteral("(\\d+)\\t") + daemonName());
+        QString launchctlOutput = QString::fromUtf8(launchctl.readAllStandardOutput());
+
+        QRegularExpressionMatch match = re.match(launchctlOutput);
+        if (match.hasMatch()) {
+            int daemonStatus = match.captured(1).toInt();
+            if (!daemonStatus)
+                status = RunningStatus;
+        }
+    }
+    else
+        qDaemonLog(QStringLiteral("Couldn't start the daemon %1").arg(QString::fromUtf8(launchctl.readAllStandardError())), QDaemonLog::ErrorEntry);
+
+    return status;
 }
 
 QT_END_NAMESPACE

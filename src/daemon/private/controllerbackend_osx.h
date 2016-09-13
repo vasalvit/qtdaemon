@@ -62,6 +62,7 @@ namespace QtDaemon
     private:
         QString configurationPath() const;
         QString daemonTargetFileName() const;
+        QString daemonName() const;
         QString configurationFilePath() const;
 
     private:
