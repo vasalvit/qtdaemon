@@ -82,7 +82,7 @@ operating system.
         \li Used to supply a directory path for the \c{init.d} script.
             \note The default path is \c{/etc/init.d}.
     \row
-        \li {3, 1} \b{OS X}
+        \li {3, 1} \b{macOS}
     \row
         \li \c{--agent}
         \li \c{--install}
