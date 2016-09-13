@@ -79,13 +79,13 @@ public:
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);	// We want to quit (if we are not already quitting)
     }
 
-    void WindowsCtrlDispatcher::startService()
+    void startService()
     {
         start();						// Start the control thread
         serviceStartLock.acquire();		// Wait until the service has started
     }
 
-    void WindowsCtrlDispatcher::stopService()
+    void stopService()
     {
         if (serviceQuitLock.available() > 0)
             return;		// Already requested a stop
@@ -127,7 +127,7 @@ VOID WINAPI ServiceMain(DWORD, LPTSTR *)
     // Fill up initial values
     ctrl->serviceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
     ctrl->serviceStatus.dwServiceSpecificExitCode = NO_ERROR;
-    ctrl->serviceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_PRESHUTDOWN | SERVICE_ACCEPT_SHUTDOWN;
+    ctrl->serviceStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
 
     // Report initial status to the SCM
     ReportServiceStatus(SERVICE_START_PENDING, NO_ERROR, serviceWaitHint);
@@ -146,7 +146,6 @@ DWORD WINAPI ServiceControlHandler(DWORD control, DWORD, LPVOID, LPVOID context)
     switch (control)
     {
     case SERVICE_CONTROL_STOP:
-    case SERVICE_CONTROL_PRESHUTDOWN:
     case SERVICE_CONTROL_SHUTDOWN:
         ReportServiceStatus(SERVICE_STOP_PENDING, NO_ERROR, serviceWaitHint);
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);

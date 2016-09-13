@@ -30,7 +30,9 @@ object:
             to uninstall the daemon/service.
             \note On Linux use the \c init.d script generated when the
             daemon is installed.
-
+    \row
+        \li \c{--status}
+        \li Report on the daemon status.
     \row
         \li \c{--help}, \c{-h}
         \li Provide help text on the command line switches.

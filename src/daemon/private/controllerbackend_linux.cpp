@@ -285,5 +285,25 @@ bool ControllerBackendLinux::uninstall()
     return true;
 }
 
+QAbstractControllerBackend::DaemonStatus ControllerBackendLinux::status()
+{
+    // Connect to the DBus infrastructure
+    QDBusConnection dbus = QDBusConnection::systemBus();
+    if (!dbus.isConnected())  {
+        qDaemonLog(QStringLiteral("Can't connect to the DBus system bus (%1)").arg(dbus.lastError().message()), QDaemonLog::ErrorEntry);
+        return NotRunningStatus;
+    }
+
+    // Get the service name
+    QString service = DaemonBackendLinux::serviceName();
+
+    // Acquire the DBus interface
+    QScopedPointer<QDBusAbstractInterface> interface(new QDBusInterface(service, QStringLiteral("/"), QStringLiteral(Q_DAEMON_DBUS_CONTROL_INTERFACE), dbus));
+    if (!interface->isValid())
+        return NotRunningStatus;
+
+    QDBusReply<bool> reply = interface->call(QStringLiteral("isRunning"));
+    return reply.isValid() && reply.value() ? RunningStatus : NotRunningStatus;
+}
 
 QT_END_NAMESPACE

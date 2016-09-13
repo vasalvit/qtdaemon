@@ -57,10 +57,12 @@ namespace QtDaemon
         bool stop() Q_DECL_OVERRIDE;
         bool install() Q_DECL_OVERRIDE;
         bool uninstall() Q_DECL_OVERRIDE;
+        DaemonStatus status() Q_DECL_OVERRIDE;
 
     private:
         QString configurationPath() const;
         QString daemonTargetFileName() const;
+        QString daemonName() const;
         QString configurationFilePath() const;
 
     private:

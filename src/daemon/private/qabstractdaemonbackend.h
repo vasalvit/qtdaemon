@@ -72,6 +72,12 @@ namespace QtDaemon
     {
         Q_DISABLE_COPY(QAbstractControllerBackend)
 
+    protected:
+        enum DaemonStatus {
+            RunningStatus,
+            NotRunningStatus
+        };
+
     public:
         QAbstractControllerBackend(QCommandLineParser &, bool);
 
@@ -81,6 +87,7 @@ namespace QtDaemon
         virtual bool stop() = 0;
         virtual bool install() = 0;
         virtual bool uninstall() = 0;
+        virtual DaemonStatus status() = 0;
 
     protected:
         bool autoQuit;
@@ -89,6 +96,7 @@ namespace QtDaemon
         const QCommandLineOption uninstallOption;
         const QCommandLineOption startOption;
         const QCommandLineOption stopOption;
+        const QCommandLineOption statusOption;
         const QCommandLineOption fakeOption;
     };
 }
