@@ -1,3 +1,5 @@
+This is fork of [nye/qtdaemon from BitBucket](https://bitbucket.org/nye/qtdaemon).
+
 # Quick summary #
 A library facilitating the creation of daemons (linux) or services (windows).
 
